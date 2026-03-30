@@ -55,7 +55,6 @@ SILENCED_SYSTEM_CHECKS = ['urls.W005', 'templates.W003']
 INSTALLED_APPS = [
     'shop.apps.user',
     'djangocms_admin_style',
-    'admin_volt.apps.AdminVoltConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

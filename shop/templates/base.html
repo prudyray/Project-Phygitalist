@@ -37,7 +37,6 @@
     {% block head %}{% endblock %}
 
     {% render_block "css" postprocessor "compressor.contrib.sekizai.compress" %}
-    {#% render_block "css" %#}
 
     {% block extrahead %}{% endblock %}
 
@@ -133,7 +132,7 @@
             {% block onbodyload %}{% endblock %}
         });
     </script>
-    {% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+    {% render_block "js" %}
     {# Page meta-data - this is populated by the 'metadata' template context processor #}
 </body>
 </html>
