@@ -437,6 +437,26 @@ CMS_TEMPLATES = (
 
 CMS_PERMISSION = True
 
+# djangocms_text_ckeditor settings to allow video and source tags and autoplay attributes
+TEXT_ADDITIONAL_TAGS = ('video', 'source')
+TEXT_ADDITIONAL_ATTRIBUTES = (
+    'controls',
+    'loop',
+    'autoplay',
+    'muted',
+    'playsinline',
+    'src',
+    'type',
+)
+
+CKEDITOR_SETTINGS = {
+    'basicEntities': False,
+    'entities': False,
+    # sometimes also useful:
+    # 'allowedContent': True,
+    # 'extraAllowedContent': 'video[*]{*}(*); source[*]{*}(*)',
+}
+
 # Allow admin sidebar to open admin URLs
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
