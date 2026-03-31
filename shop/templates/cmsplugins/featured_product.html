@@ -53,7 +53,9 @@
             {% endif %}
         {% endif %}
             </span>
-            <span class="old-price">[Members only price]</span>
+            {% if instance.product.mrp %}
+                <span class="old-price">{{ instance.product.mrp }}</span>
+            {% endif %}
         </div>
         <div class="product-action-1 show">
             {% basket_form request instance.product as basket_form %}

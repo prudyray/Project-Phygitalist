@@ -14,7 +14,7 @@
          <div class="clearfix product-price-cover">
             <div class="product-price primary-color float-left">
                 <ins><span class="text-brand">{{ session.price.excl_tax|currency:session.price.currency }}</span></ins>
-                <span>[Member Only Price]</span><span class="original_price font-md ml-15">Original Price : ₹ 
+                <span>{{ product.mrp }}</span><span class="original_price font-md ml-15">Original Price : ₹ 
                 {% if product.mrp %}
                     {{ product.mrp }}
                 {% else %}

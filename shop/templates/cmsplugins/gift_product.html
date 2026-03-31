@@ -16,7 +16,7 @@
 </figure>
 
 <div class="col-md-8 mb-0">
-    <h4 class="title-small"><a href="{{ instance.product.primary_image.original.url }}">{{ instance.product.title }}</a></h4>
+    <h4 class="title-small"><a href="{{ instance.product.get_absolute_url }}">{{ instance.product.title }}</a></h4>
 
 <div class="product-price">
     {% purchase_info_for_product request instance.product as session %}
@@ -29,6 +29,6 @@
         {% endif %}
     {% endif %}
     </span>
-    <span class="old-price">[Member only price]</span></div>
+    <span class="old-price">{{ instance.product.mrp }}</span></div>
 </div>
 </article>
