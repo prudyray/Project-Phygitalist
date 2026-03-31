@@ -7,17 +7,20 @@
 {% load i18n %}
 {% load purchase_info_tags %}
 {% load basket_tags %}
+{% load image_tags %}
 
 <div class="product-cart-wrap">
 <div class="product-img-action-wrap">
   <div class="product-img product-img-zoom">
       <a href="{{ instance.product.get_absolute_url }}">
-          <img class="default-img" src="{{ instance.product.primary_image.original.url }}" alt="">
-          {% with instance.product.get_all_images|array_index:1 as second_image %}
+        {% oscar_thumbnail instance.product.primary_image.original "198x198" upscale=False as thumb_primary %}
+          <img class="default-img" src="{{ thumb_primary.url }}" alt="{{ product.get_title }}">
+          {% with product.get_all_images|array_index:1 as second_image %}
               {% if second_image %}
-                <img class="hover-img" src="{{ second_image.original.url }}" alt="">
+                {% oscar_thumbnail second_image.original "198x198" upscale=False as thumb_secondary %}
+                <img class="hover-img" src="{{ thumb_secondary.url }}" alt="{{ product.get_title }}">
               {% else %}
-                <img class="hover-img" src="{{ instance.product.primary_image.original.url }}" alt="">
+              <img class="hover-img" src="{{ thumb_primary.url }}" alt="{{ product.get_title }}">
               {% endif %}
           {% endwith %}
       </a>

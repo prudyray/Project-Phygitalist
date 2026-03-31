@@ -389,11 +389,11 @@ You can also connect with the local CEO ( Community Exchange Officer ) for in pe
                       <div class="product-img-action-wrap">
                         <div class="product-img product-img-zoom">
                           <a href="{{ product.get_absolute_url }}">
-                              {% oscar_thumbnail product.primary_image.original "320x240" upscale=False as thumb_primary %}
+                              {% oscar_thumbnail product.primary_image.original "400x400" upscale=False as thumb_primary %}
                               <img class="default-img" src="{{ thumb_primary.url }}" alt="{{ product.get_title }}">
                               {% with product.get_all_images|array_index:1 as second_image %}
                                   {% if second_image %}
-                                    {% oscar_thumbnail second_image.original "320x240" upscale=False as thumb_secondary %}
+                                    {% oscar_thumbnail second_image.original "400x400" upscale=False as thumb_secondary %}
                                     <img class="hover-img" src="{{ thumb_secondary.url }}" alt="{{ product.get_title }}">
                                   {% else %}
                                   <img class="hover-img" src="{{ thumb_primary.url }}" alt="{{ product.get_title }}">
