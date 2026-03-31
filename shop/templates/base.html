@@ -26,9 +26,15 @@
         <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}" />
     {% endblock %}
 
+    {# Google Fonts - as <link> tags to avoid render-blocking CSS @import #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap">
+
     {# Block where global CSS will go. #}
     {% block styles %}
-        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+        <link rel="stylesheet" href="{% static 'css/home.bundle.css' %}">
     {% endblock %}
 
     {# Additional CSS - specific to certain pages #}
