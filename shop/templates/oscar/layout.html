@@ -84,6 +84,7 @@ input.q {
 {# Local scripts #}
 {% block scripts %}
     {{ block.super }}
+    {% compress js %}
     <!-- Twitter Bootstrap -->
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <!-- Oscar -->
@@ -111,6 +112,7 @@ input.q {
     <!-- Template  JS -->
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/shop.js' %}"></script>
+    {% endcompress %}
 
 {% endblock %}
 
