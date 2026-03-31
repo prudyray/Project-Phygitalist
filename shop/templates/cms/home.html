@@ -17,6 +17,25 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
   .slider-text{
     color: #fff;
   }
+/* 1. Reset for Desktop: Ensure no unwanted shifts */
+    .gallery-btn {
+        margin-top: 0;
+        top: 0;
+    }
+    /* Mobile-only styles (Screens smaller than 768px) */
+    @media (max-width: 767px) {
+        .gallery-btn {
+            padding: 5px 10px !important;
+            font-size: 11px !important;
+            min-width: auto !important;
+            display: inline-block !important;
+            
+            /* Moves the button up - adjust the -20px as needed */
+            margin-top: 10px !important; 
+            position: relative;
+            top: -5px; 
+        }
+    }
 </style>
 <link rel="stylesheet" href="{% static 'css/base.css' %}">
 {% endblock %}
@@ -46,7 +65,7 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
                                                 <h2 class="animated fw-900">Our T-Shirt Gun is Loading</h2>
                                                 <h1 class="animated fw-900 slider-text">Get Your Tee Free Now</h1>
                                                 <h4 class="animated">Follow our socials &amp; start freebeeing 🎁</h4>
-                                                <a class="animated  slider-text btn btn-primary btn-rounded btn-md" href="https://www.zite69.com/catalogue/unisex-t-shirt_75/"> TRY </a>
+                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md gallery-btn" href="https://www.zite69.com/catalogue/unisex-t-shirt_75/"> TRY </a>
                                             </div>
                                             <div class="slider-img">
                                                 <img src="{% static 'img/slider/1.png' %}" alt="">
@@ -63,7 +82,7 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
                                                 <h2 class="animated fw-900">Phone Free Childhood Special</h2>
                                                 <h1 class="animated fw-900 slider-text">Giker's Super Decoder</h1>
                                                 <h4 class="animated">Coming soon | First time in your town </h4>
-                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md" href="https://we.zite69.com/crack-the-code-why-giikers-super-decoder-is-the-ultimate-screen-time-swap-%f0%9f%95%b5%ef%b8%8f%e2%99%82%ef%b8%8f%e2%9c%a8/"> PRE-SALE </a>
+                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md gallery-btn" href="https://we.zite69.com/crack-the-code-why-giikers-super-decoder-is-the-ultimate-screen-time-swap-%f0%9f%95%b5%ef%b8%8f%e2%99%82%ef%b8%8f%e2%9c%a8/"> PRE-SALE </a>
                                             </div>
                                             <div class="slider-img">
                                                 <img src="{% static 'img/slider/2.png' %}" alt="">
@@ -79,7 +98,7 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
                                                 <h2 class="animated fw-900">From the Coffee Hills of Kerala</h2>
                                                 <h1 class="animated fw-900 slider-text">Malabar Masala Coffee </h1>
                                                 <h4 class="animated">Home Coffeetail Recipe </h4>
-                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md" href="https://www.zite69.com/catalogue/spice-blended-masala-coffee-100g_54/">GET TRIAL PACK</a>
+                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md gallery-btn" href="https://www.zite69.com/catalogue/spice-blended-masala-coffee-100g_54/">GET TRIAL PACK</a>
                                             </div>
                                             <div class="slider-img">
                                                 <img src="{% static 'img/slider/3.png' %}" alt="">
@@ -95,7 +114,7 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
                                                 <h2 class="animated fw-900">Art of the Giant Grass</h2>
                                                 <h1 class="animated fw-900 slider-text">Bamboo Wall Mask</h1>
                                                 <h4 class="animated slider-text">For Your Home Resets</h4>
-                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md" href="https://www.zite69.com/catalogue/brown-gaze_47/"> VIEW IN GALLERY</a>
+                                                <a class="animated slider-text btn btn-primary btn-rounded btn-md gallery-btn" href="https://www.zite69.com/catalogue/brown-gaze_47/"> VIEW IN GALLERY</a>
                                             </div>
                                             <div class="slider-img">
                                                 <img src="{% static 'img/slider/4.png' %}" alt="">
