@@ -29,6 +29,8 @@
         {% endif %}
     {% endif %}
     </span>
+    {% if instance.product.mrp %}
     <span class="old-price">{{ instance.product.mrp }}</span></div>
+    {% endif %}
 </div>
 </article>
