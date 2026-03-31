@@ -75,7 +75,8 @@ INSTALLED_APPS = [
     'cms',
     'menus',
     'django.forms',
-    'djangocms_text_ckeditor',
+    'djangocms_text',
+    'djangocms_text.contrib.text_ckeditor4',
     'djangocms_alias',
     'djangocms_versioning',
     'djangocms_link',
@@ -436,34 +437,22 @@ CMS_TEMPLATES = (
 
 CMS_PERMISSION = True
 
-# djangocms_text_ckeditor settings to allow video and source tags and autoplay attributes
-TEXT_ADDITIONAL_TAGS = ('video', 'source')
-TEXT_ADDITIONAL_ATTRIBUTES = (
-    'controls',
-    'loop',
-    'autoplay',
-    'muted',
-    'playsinline',
-    'src',
-    'type',
-)
+# Allow admin sidebar to open admin URLs
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+# Use CKEditor 4 as the text editor (includes source view)
+TEXT_EDITOR = 'djangocms_text.contrib.text_ckeditor4.ckeditor4'
+
+# Allow video/source tags and their attributes
+TEXT_ADDITIONAL_ATTRIBUTES = {
+    "video": {'controls', 'loop', 'autoplay', 'muted', 'playsinline', 'src', 'type'},
+    "source": {'src', 'type'},
+}
 
 CKEDITOR_SETTINGS = {
     'basicEntities': False,
     'entities': False,
-    # sometimes also useful:
-    # 'allowedContent': True,
-    # 'extraAllowedContent': 'video[*]{*}(*); source[*]{*}(*)',
 }
-
-# Allow admin sidebar to open admin URLs
-
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-
-# Enable inline editing with djangocms-text-ckeditor
-# https://github.com/django-cms/djangocms-text-ckeditor#inline-editing-feature
-
-TEXT_INLINE_EDITING = True
 
 # Add project-wide static files directory
 # https://docs.djangoproject.com/en/4.2/ref/settings/#staticfiles-dirs

@@ -72,6 +72,11 @@
     /*Carausel 6 columns*/
     $(".carausel-6-columns").each(function(key, item) {
         var id=$(this).attr("id");
+        if (!id) {
+            id = 'carausel-6-columns-' + key;
+            $(this).attr("id", id);
+            $(this).siblings('.carausel-6-columns-arrow').attr("id", id + '-arrows');
+        }
         var sliderID='#'+id;
         var appendArrowsClassName = '#'+id+'-arrows'
 
@@ -114,6 +119,8 @@
         };
         if ($(this).find('.product-cart-wrap').length > 0) {
             slickOptions.slide = '.product-cart-wrap';
+        } else if ($(this).find('.card-1').length > 0) {
+            slickOptions.slide = '.card-1';
         }
         $(sliderID).slick(slickOptions);
     });
@@ -121,6 +128,11 @@
     /*Carausel 4 columns*/
     $(".carausel-4-columns").each(function(key, item) {
         var id=$(this).attr("id");
+        if (!id) {
+            id = 'carausel-4-columns-' + key;
+            $(this).attr("id", id);
+            $(this).siblings('.carausel-4-columns-arrow').attr("id", id + '-arrows');
+        }
         var sliderID='#'+id;
         var appendArrowsClassName = '#'+id+'-arrows'
 

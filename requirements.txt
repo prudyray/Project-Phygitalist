@@ -76,10 +76,10 @@ djangocms-admin-style==3.3.1
 djangocms-alias==2.0.5
 djangocms-attributes-field==4.1.1
 djangocms-forms @ git+https://github.com/zite69/djangocms-forms.git@2c25e170ec82f890313cd51bfe91eb466f44c559
-djangocms-frontend==2.2.0
+djangocms-frontend==2.4.0
 djangocms-icon==2.1.0
 djangocms-link==5.1.0
-djangocms-text-ckeditor==5.1.7
+djangocms-text==0.9.4
 djangocms-versioning==2.4.0
 djangorestframework==3.15.2
 docutils==0.21.2
