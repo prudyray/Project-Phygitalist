@@ -18,7 +18,7 @@
               <img class="default-img" src="{{ thumb_primary.url }}" alt="">
               {% with instance.product.get_all_images|array_index:1 as second_image %}
                   {% if second_image %}
-                    {% oscar_thumbnail second_image "280x280" upscale=False as thumb_secondary %}
+                    {% oscar_thumbnail second_image.original "280x280" upscale=False as thumb_secondary %}
                     <img class="hover-img" src="{{ thumb_secondary.url }}" alt="">
                   {% else %}
                     <img class="hover-img" src="{{ thumb_primary.url }}" alt="">

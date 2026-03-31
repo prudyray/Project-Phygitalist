@@ -289,7 +289,7 @@ TEMPLATES = [
             'libraries': {
                 # Resolve conflict between easy_thumbnails and sorl.thumbnail
                 # both registering a 'thumbnail' template tag library
-                'thumbnail': 'sorl.thumbnail.templatetags.thumbnail',
+                'thumbnail': 'easy_thumbnails.templatetags.thumbnail',
             },
         },
     },
@@ -308,6 +308,8 @@ THUMBNAIL_PROCESSORS = (
     'filer.thumbnail_processors.scale_and_crop_with_subject_location',
     'easy_thumbnails.processors.filters',
 )
+
+OSCAR_THUMBNAILER = 'oscar.core.thumbnails.EasyThumbnails'
 
 WSGI_APPLICATION = 'shop.wsgi.application'
 
@@ -530,6 +532,8 @@ OSCAR_SHOP_NAME = "zite69"
 OSCAR_SHOP_TAGLINE = "Super Social Marketplace"
 
 OSCAR_DEFAULT_CURRENCY = 'INR'
+
+OSCAR_THUMBNAILER = 'oscar.core.thumbnails.EasyThumbnails'
 
 #LOGGING = env.json("LOGGING", default={})
 LOGGING_ENV = env.json("LOGGING", default={})
