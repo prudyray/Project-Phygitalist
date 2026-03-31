@@ -1,0 +1,34 @@
+{% load cms_tags %}
+{% load array_index %}
+{% load currency_filters %}
+{% load reviews_tags %}
+{% load product_tags %}
+{% load display_tags %}
+{% load i18n %}
+{% load purchase_info_tags %}
+{% load basket_tags %}
+
+<article class="row align-items-center">
+<figure class="col-md-4 mb-0">
+    <a href="{{ instance.product.get_absolute_url }}">
+          <img src="{{ instance.product.primary_image.original.url }}" alt="">
+    </a>
+</figure>
+
+<div class="col-md-8 mb-0">
+    <h4 class="title-small"><a href="{{ instance.product.primary_image.original.url }}">{{ instance.product.title }}</a></h4>
+
+<div class="product-price">
+    {% purchase_info_for_product request instance.product as session %}
+    <span>
+    {% if session.price.exists %}
+        {% if session.price.is_tax_known %}
+            {{ session.price.incl_tax|currency:session.price.currency }}
+        {% else %}
+            {{ session.price.excl_tax|currency:session.price.currency }}
+        {% endif %}
+    {% endif %}
+    </span>
+    <span class="old-price">[Member only price]</span></div>
+</div>
+</article>

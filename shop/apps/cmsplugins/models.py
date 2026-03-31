@@ -32,3 +32,6 @@ class GroupBuyProduct(CMSPlugin):
 
 class AdaCollabProduct(CMSPlugin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+class GiftsProduct(CMSPlugin):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
