@@ -7,12 +7,12 @@
 {% load array_index %}
 {% load purchase_info_tags %}
 {% load currency_filters %}
-{% load thumbnail %}
+{% load image_tags %}
 {% load static %}
 
 {% block head %}
     {{ block.super }}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/catalogue.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/catalogue.bundle.css' %}">
 {% endblock %}
 
 {% block extrahead %}
@@ -126,18 +126,14 @@
                               <div class="product-img-action-wrap">
                                 <div class="product-img product-img-zoom">
                                   <a href="{{ product.get_absolute_url }}">
-                                      {% thumbnail product.primary_image.original "400x400" as thumb %}
+                                      {% oscar_thumbnail product.primary_image.original "400x400" as thumb %}
                                       <img class="default-img" src="{{ thumb.url }}" alt="{{ product.get_title }}">
-                                      {% endthumbnail %}
                                       {% with product.get_all_images|array_index:1 as second_image %}
                                           {% if second_image %}
-                                              {% thumbnail second_image.original "400x400" as thumb2 %}
+                                              {% oscar_thumbnail second_image.original "400x400" as thumb2 %}
                                               <img class="hover-img" src="{{ thumb2.url }}" alt="{{ product.get_title }}">
-                                              {% endthumbnail %}
                                           {% else %}
-                                              {% thumbnail product.primary_image.original "400x400" as thumb3 %}
-                                              <img class="hover-img" src="{{ thumb3.url }}" alt="{{ product.get_title }}">
-                                              {% endthumbnail %}
+                                              <img class="hover-img" src="{{ thumb.url }}" alt="{{ product.get_title }}">
                                           {% endif %}
                                       {% endwith %}
                                   </a>
@@ -174,7 +170,9 @@
                                     {% endif %}
                                 {% endif %}
                                     </span>
-                                    <span class="old-price">[Members only price]</span>
+                                    {% if product.mrp %}
+                                    <span class="old-price">₹{{ product.mrp }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="product-action-1 show">
                                     {% basket_form request product as basket_form %}

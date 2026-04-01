@@ -7,7 +7,7 @@
 {% block styles %}
 {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'oscar/css/styles.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.bundle.css' %}">
     {% addtoblock "css" %}
         {% for k, form in forms.items %}
             {{ form.media.css }}

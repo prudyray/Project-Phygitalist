@@ -29,8 +29,6 @@ TABLE CONTENT
  WP STYPE
  Custom amine
 ***/
-@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
 /*import vendors*/
 @import url(vendors/normalize.css);
 @import url(vendors/bootstrap.min.css);
@@ -1014,7 +1012,7 @@ button.buy:hover, button[type='buy']:hover {
 }
 
 button[type="submit"].add-wishlist-btn {
-  padding:12px 15px; !important;
+  padding:12px 15px !important;
 }
 
 .btn:hover, .button:hover {
@@ -3301,7 +3299,7 @@ table .product-thumbnail img {
   Color:#ffffff;
   text-transform: capitalize;
 }
-}
+
 .deal .product-price .old-price {
   color: #cccccc;
   text-decoration: line-through;
@@ -10279,4 +10277,4 @@ button {
         gap: 10px;
     }
 }
-}
+

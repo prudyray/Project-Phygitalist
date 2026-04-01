@@ -7,20 +7,13 @@
 {% load i18n %}
 {% load purchase_info_tags %}
 {% load basket_tags %}
+{% load image_tags %}
 
 <div class="product-cart-wrap small hover-up">
     <div class="product-img-action-wrap">
         <div class="product-img product-img-zoom">
-              <a href="{{ instance.product.get_absolute_url }}">
-                  <img class="default-img" src="{{ instance.product.primary_image.original.url }}" alt="">
-                  {% with instance.product.get_all_images|array_index:1 as second_image %}
-                      {% if second_image %}
-                        <img class="hover-img" src="{{ second_image.original.url }}" alt="">
-                      {% else %}
-                        <img class="hover-img" src="{{ instance.product.primary_image.original.url }}" alt="">
-                      {% endif %}
-                  {% endwith %}
-              </a>
+          {% oscar_thumbnail instance.product.primary_image.original "194x194" upscale=False as thumb_primary %}
+          <img class="default-img" src="{{ thumb_primary.url }}" alt="{{ product.get_title }}">
         </div>
     </div>
     <div class="product-content-wrap">
@@ -40,7 +33,7 @@
                 {% endif %}
         {% endif %}
         </span>
-        <span class="old-price">{{ instance.product.mrp }}</span>
+        <span class="old-price">₹ {{ instance.product.mrp }}</span>
       </div>
     </div>
 </div>
