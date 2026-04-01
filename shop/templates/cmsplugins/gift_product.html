@@ -10,14 +10,14 @@
 {% load image_tags %}
 
 <article class="row align-items-center">
-<figure class="col-md-4 mb-0">
+<figure class="col-4 col-md-4 mb-0">
     <a href="{{ instance.product.get_absolute_url }}">
           {% oscar_thumbnail instance.product.primary_image.original "86x86" upscale=False as thumb_primary %}
           <img src="{{ thumb_primary.url }}" alt="">
     </a>
 </figure>
 
-<div class="col-md-8 mb-0">
+<div class="col-8 col-md-8 mb-0">
     <h4 class="title-small"><a href="{{ instance.product.get_absolute_url }}">{{ instance.product.title }}</a></h4>
 
 <div class="product-price">
