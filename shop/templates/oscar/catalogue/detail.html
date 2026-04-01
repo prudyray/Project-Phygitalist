@@ -433,7 +433,9 @@ You can also connect with the local CEO ( Community Exchange Officer ) for in pe
                             {% endif %}
                         {% endif %}
                             </span>
-                            <span class="old-price">[Members only price]</span>
+                            {% if product.mrp %}
+                            <span class="old-price">₹ {{ product.mrp }}</span>
+                            {% endif %}
                         </div>
                         <div class="product-action-1 show">
                             {% basket_form request product as basket_form %}
