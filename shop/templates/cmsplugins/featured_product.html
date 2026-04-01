@@ -27,9 +27,11 @@
           </a>
         </div>
         <div class="product-action-1">
-          <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-          <a aria-label="Add To Wishlist" class="action-btn hover-up" href="index.html#"><i class="fi-rs-heart"></i></a>
-          <a aria-label="Compare" class="action-btn hover-up" href="index.html#"><i class="fi-rs-shuffle"></i></a>
+          <form id="add_to_wishlist_form" action="{% url 'customer:wishlists-add-product' product_pk=instance.product.pk %}" method="post" class="add-to-wishlist align-bottom">
+            {% csrf_token %}
+            <button type="submit" class="add-wishlist-btn action-btn hover-up"  data-loading-text="{% trans 'Adding...' %}"><i class="fi-rs-heart"></i></button>
+          </form>
+          <!-- <a aria-label="Add To Wishlist" class="action-btn hover-up" href="index.html#"><i class="fi-rs-heart"></i></a>-->
         </div>
         <div class="product-badges product-badges-position product-badges-mrg">
             <span class="{{ instance.label_type }}">{{ instance.label }}</span>
