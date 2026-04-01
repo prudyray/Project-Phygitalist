@@ -3,6 +3,7 @@
 {% load static %}
 {% load djangocms_alias_tags %}
 {% load site_urls %}
+{% load compress %}
 
 {% block title %}
 zite69📢Your personal mark@t home! ❤️Ea₹n Everyway 🔴Live Sale📍Buy Nearby 💥Group Buy  +Surprice Deals! 
@@ -458,6 +459,7 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
 {% endblock %}
 
 {% block extrascripts %}
+    {% compress js %}
     <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'js/vendor/jquery-migrate-3.3.0.min.js' %}"></script>
@@ -481,5 +483,5 @@ India’s newly loved❤  3-in-1 Supercommerce platform  for Fashion, Lifestyle,
     <!-- Template  JS -->
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/shop.js' %}"></script>
-
+    {% endcompress %}
 {% endblock %}
