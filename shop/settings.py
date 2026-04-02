@@ -447,7 +447,7 @@ TEXT_EDITOR = 'djangocms_text.contrib.text_ckeditor4.ckeditor4'
 
 # Allow video/source tags and their attributes
 TEXT_ADDITIONAL_ATTRIBUTES = {
-    "video": {'controls', 'loop', 'autoplay', 'muted', 'playsinline', 'src', 'type'},
+    "video": {'controls', 'loop', 'autoplay', 'muted', 'playsinline', 'src', 'type', 'width', 'height'},
     "source": {'src', 'type'},
 }
 
