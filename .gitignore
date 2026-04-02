@@ -33,3 +33,4 @@ Makefile
 /protected
 shop/static/scss/**/*.css
 node_modules/
+.dual-graph/
