@@ -15,10 +15,20 @@
 
 {% block extrahead %}
     {{ block.super }}
-{% addtoblock "css" %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/catalogue.bundle.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/magnifier.css' %}">
-{% endaddtoblock %}
+    {% oscar_thumbnail product.primary_image.original "440x400" upscale=False as og_thumb %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ og_thumb.url }}">
+    <meta property="og:title" content="{{ product.get_title }}">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ product.get_absolute_url }}">
+    <script type="application/ld+json">{
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{{ product.get_absolute_url }}",
+      "primaryImageOfPage": "{{ request.scheme }}://{{ request.get_host }}{{ og_thumb.url }}"
+    }</script>
+    {% addtoblock "css" %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/catalogue.bundle.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/magnifier.css' %}">
+    {% endaddtoblock %}
 <style>
 
 .add-to-basket {
