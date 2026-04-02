@@ -1,7 +1,7 @@
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from django.utils.translation import gettext as _
-from shop.apps.cmsplugins.models import FeaturedProduct, FeaturedProductCollection, GroupBuyProduct, AdaCollabProduct, GiftsProduct
+from shop.apps.cmsplugins.models import FeaturedProduct, FeaturedProductCollection, GroupBuyProduct, AdaCollabProduct, GiftsProduct, ImageCarousel, HeroCarousel, HeroSlide
 from . import forms
 
 @plugin_pool.register_plugin
@@ -65,6 +65,47 @@ class GiftsProductPlugin(CMSPluginBase):
     name = _("Gifts and Games Product")
     render_template = "cmsplugins/gift_product.html"
     allow_children = False
+
+    def render(self, context, instance, placeholder):
+        context.update({"instance": instance})
+        return context
+
+@plugin_pool.register_plugin
+class ImageCarouselPlugin(CMSPluginBase):
+    model = ImageCarousel
+    module = _("Zite69")
+    name = _("Image Carousel")
+    render_template = "cmsplugins/image_carousel.html"
+    allow_children = True
+    child_classes = ["ImagePlugin"]
+
+    def render(self, context, instance, placeholder):
+        context.update({"instance": instance})
+        return context
+
+@plugin_pool.register_plugin
+class HeroCarouselPlugin(CMSPluginBase):
+    model = HeroCarousel
+    module = _("Zite69")
+    name = _("Hero Carousel")
+    render_template = "cmsplugins/hero_carousel.html"
+    allow_children = True
+    child_classes = ["HeroSlidePlugin"]
+
+    def render(self, context, instance, placeholder):
+        context.update({"instance": instance})
+        return context
+
+@plugin_pool.register_plugin
+class HeroSlidePlugin(CMSPluginBase):
+    model = HeroSlide
+    module = _("Zite69")
+    name = _("Hero Slide")
+    render_template = "cmsplugins/hero_slide.html"
+    allow_children = True
+    child_classes = ["TextPlugin"]
+    require_parent = True
+    parent_classes = ["HeroCarouselPlugin"]
 
     def render(self, context, instance, placeholder):
         context.update({"instance": instance})

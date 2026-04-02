@@ -1,0 +1,18 @@
+{% load cms_tags %}
+
+<div class="carousel-container image-carousel-container">
+    <div class="carousel-track" id="image-carousel-track">
+        {% for plugin in instance.child_plugin_instances %}
+            <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                {% render_plugin plugin %}
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-button carousel-prev" onclick="changeImageSlide(-1)">&#8249;</button>
+    <button class="carousel-button carousel-next" onclick="changeImageSlide(1)">&#8250;</button>
+    <div class="carousel-nav" id="image-carousel-nav">
+        {% for plugin in instance.child_plugin_instances %}
+            <div class="carousel-dot{% if forloop.first %} active{% endif %}"></div>
+        {% endfor %}
+    </div>
+</div>

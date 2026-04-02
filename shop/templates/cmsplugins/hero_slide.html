@@ -1,0 +1,16 @@
+{% load cms_tags %}
+
+<div class="single-hero-slider single-animation-wrap">
+    <div class="container">
+        <div class="slider-1-height-3 slider-animated-1">
+            <div class="hero-slider-content-2">
+                {% for plugin in instance.child_plugin_instances %}
+                    {% render_plugin plugin %}
+                {% endfor %}
+            </div>
+            <div class="slider-img">
+                <img src="{{ instance.slide_image.url }}" alt="">
+            </div>
+        </div>
+    </div>
+</div>

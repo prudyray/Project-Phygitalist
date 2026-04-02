@@ -35,3 +35,12 @@ class AdaCollabProduct(CMSPlugin):
 
 class GiftsProduct(CMSPlugin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+class ImageCarousel(CMSPlugin):
+    pass
+
+class HeroCarousel(CMSPlugin):
+    pass
+
+class HeroSlide(CMSPlugin):
+    slide_image = models.ImageField(upload_to="plugins/hero_carousel")

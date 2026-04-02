@@ -1,0 +1,10 @@
+{% load cms_tags %}
+
+<div class="position-relative">
+    <div class="hero-slider-1 style-3 dot-style-1 dot-style-1-position-1">
+        {% for plugin in instance.child_plugin_instances %}
+            {% render_plugin plugin %}
+        {% endfor %}
+    </div>
+    <div class="slider-arrow hero-slider-1-arrow style-3" style="top:65%;"></div>
+</div>
