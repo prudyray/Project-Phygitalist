@@ -6,6 +6,7 @@ pyrightconfig.json
 .phcode.json
 .claude
 requirements.current.txt
+CLAUDE.md
 
 *.log
 *.pot
