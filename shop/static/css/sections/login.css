@@ -242,6 +242,7 @@ input:focus {
     margin-top: 15px;
     margin-bottom: 20px;
     transition: background-color 0.2s ease;
+    height: 48px;
 }
 
 .proceed-btn, .verify-btn {

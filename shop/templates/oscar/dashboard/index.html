@@ -1,6 +1,7 @@
 {% extends 'oscar/dashboard/layout.html' %}
 {% load currency_filters %}
 {% load i18n %}
+{% load static %}
 
 {% block body_class %}{{ block.super }} orders home{% endblock %}
 
@@ -9,165 +10,365 @@
     <meta http-equiv="refresh" content="300">
 {% endblock %}
 
-{% block breadcrumbs %}
-{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block headertext %}{% endblock %}
 
 {% block dashboard_content %}
-<div class="table-header">
-    <i class="fas fa-signal"></i> {% trans "Your Store Statistics" %}
+
+{# ── Stat cards ── #}
+<div class="content-header">
+    <div>
+        <h2 class="content-title card-title">{% trans "Dashboard" %}</h2>
+        <p>{% trans "Your store at a glance" %}</p>
+    </div>
 </div>
 
-<div class="content-block">
-    <div class="row">
-        <aside class="col-md-3 order-graph-details">
-            <label><span><i class="fas fa-shopping-cart"></i>{{ total_orders_last_day }}</span>{% trans "Total Orders" %}</label>
-            <label><span><i class="fas fa-hand-point-right"></i>{{ total_customers_last_day }}</span>{% trans "New Customers" %}</label>
-            <label><span><i class="fas fa-users"></i>{{ total_customers }}</span>{% trans "Total Customers" %}</label>
-            <label><span><i class="fas fa-briefcase"></i>{{ total_products }}</span>{% trans "Total Products" %}</label>
-        </aside>
-        <div class="col-md-9">
-            <div id="order_graph">
-                <div class="bar-caption"><h2>{% trans "Latest Orders (last 24 hours)" %}</h2></div>
-                <div class="bar-y-axis">
-                    <ul>
-                    {% for y_value in hourly_report_dict.y_range %}
-                        <li><span>{{ y_value|currency }}</span></li>
-                    {% endfor %}
-                    </ul>
+<div class="row">
+    <div class="col-lg-3">
+        <div class="card card-body mb-4">
+            <article class="icontext">
+                <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                <div class="text">
+                    <h6 class="mb-1 card-title">{% trans "Total Revenue" %}</h6>
+                    <span>{{ total_revenue|currency }}</span>
+                    <span class="text-sm">{% trans "All time" %}</span>
                 </div>
-                <dl class="bar-chart">
-                    {% for item in hourly_report_dict.order_total_hourly %}
-                        <dd class="bar-layer">
-                            <em>{{ item.end_time|time }}</em>
-                            <span style="height: {{ item.percentage }}%;" >
-                                <p{% if item.percentage == 0 %} style="display: none;"{% endif %}>{{ item.total_incl_tax|currency }}</p>
-                            </span>
-                        </dd>
-                    {% endfor %}
-                </dl>
+            </article>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card card-body mb-4">
+            <article class="icontext">
+                <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                <div class="text">
+                    <h6 class="mb-1 card-title">{% trans "Total Orders" %}</h6>
+                    <span>{{ total_orders }}</span>
+                    <span class="text-sm">{% trans "All time" %}</span>
+                </div>
+            </article>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card card-body mb-4">
+            <article class="icontext">
+                <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                <div class="text">
+                    <h6 class="mb-1 card-title">{% trans "New Orders" %}</h6>
+                    <span>{{ total_orders_last_day }}</span>
+                    <span class="text-sm">{% trans "Last 24 hours" %}</span>
+                </div>
+            </article>
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="card card-body mb-4">
+            <article class="icontext">
+                <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
+                <div class="text">
+                    <h6 class="mb-1 card-title">{% trans "Total Products" %}</h6>
+                    <span>{{ total_products }}</span>
+                    <span class="text-sm">{% trans "In catalogue" %}</span>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+{# ── Market Radar + Live from HQ ── #}
+<div class="row">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">{% trans "Market Radar" %}</h5>
+                <ul class="menu-list">
+                    <li>
+                        <span class="icon">👕</span>
+                        <span class="label">{% trans "Todays Toppers" %}</span>
+                        <span class="arrow">›</span>
+                    </li>
+                    <li>
+                        <span class="icon">🔥</span>
+                        <span class="label">{% trans "Demand Forecast" %}</span>
+                        <span class="arrow">›</span>
+                    </li>
+                    <li>
+                        <span class="icon">🔍</span>
+                        <span class="label">{% trans "Trend Tracker" %}</span>
+                        <span class="arrow">›</span>
+                    </li>
+                    <li>
+                        <span class="icon">🗺️</span>
+                        <span class="label">{% trans "Heat Map" %}</span>
+                        <span class="arrow">›</span>
+                    </li>
+                    <li>
+                        <span class="icon">📞</span>
+                        <span class="label">{% trans "Market Hotline" %}</span>
+                        <span class="arrow">›</span>
+                    </li>
+                </ul>
+            </article>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">{% trans "Live from HQ" %}</h5>
+                <div class="carousel-container image-carousel-container">
+                    <div class="carousel-track" id="image-carousel-track">
+                        <div class="carousel-item active"><img src="{% static 'img/theme/zite69_hq_1.png' %}" alt="HQ 1"></div>
+                        <div class="carousel-item"><img src="{% static 'img/theme/zite69_hq_2.png' %}" alt="HQ 2"></div>
+                        <div class="carousel-item"><img src="{% static 'img/theme/zite69_hq_3.png' %}" alt="HQ 3"></div>
+                    </div>
+                    <button class="carousel-button carousel-prev" onclick="changeImageSlide(-1)">&#8249;</button>
+                    <button class="carousel-button carousel-next" onclick="changeImageSlide(1)">&#8250;</button>
+                    <div class="carousel-nav" id="image-carousel-nav"></div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+{# ── Recent Activities + Seller School ── #}
+<div class="row">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">{% trans "Recent Activities" %}</h5>
+                <ul class="verti-timeline list-unstyled font-sm">
+                    <li class="event-list active">
+                        <div class="event-timeline-dot">
+                            <i class="material-icons md-play_circle_outline font-xxl animation-fade-right"></i>
+                        </div>
+                        <div class="media">
+                            <div class="me-3">
+                                <h6><span>{% trans "Orders last 24h" %}</span></h6>
+                            </div>
+                            <div class="media-body">
+                                {% blocktrans with count=total_orders_last_day %}{{ count }} new order(s) received today.{% endblocktrans %}
+                            </div>
+                        </div>
+                    </li>
+                    <li class="event-list">
+                        <div class="event-timeline-dot">
+                            <i class="material-icons md-play_circle_outline font-xxl"></i>
+                        </div>
+                        <div class="media">
+                            <div class="me-3">
+                                <h6><span>{% trans "New Customers" %}</span></h6>
+                            </div>
+                            <div class="media-body">
+                                {% blocktrans with count=total_customers_last_day %}{{ count }} new customer(s) in the last 24 hours.{% endblocktrans %}
+                            </div>
+                        </div>
+                    </li>
+                    <li class="event-list">
+                        <div class="event-timeline-dot">
+                            <i class="material-icons md-play_circle_outline font-xxl"></i>
+                        </div>
+                        <div class="media">
+                            <div class="me-3">
+                                <h6><span>{% trans "Stock Alerts" %}</span></h6>
+                            </div>
+                            <div class="media-body">
+                                {% blocktrans with count=total_open_stock_alerts %}{{ count }} open stock alert(s) need attention.{% endblocktrans %}
+                            </div>
+                        </div>
+                    </li>
+                    <li class="event-list">
+                        <div class="event-timeline-dot">
+                            <i class="material-icons md-play_circle_outline font-xxl"></i>
+                        </div>
+                        <div class="media">
+                            <div class="me-3">
+                                <h6><span>{% trans "Open Baskets" %}</span></h6>
+                            </div>
+                            <div class="media-body">
+                                {% blocktrans with count=total_open_baskets %}{{ count }} open basket(s) in progress.{% endblocktrans %}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </article>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="card mb-4">
+            <article class="card-body">
+                <h5 class="card-title">{% trans "Seller School" %}</h5>
+                <div class="carousel-container video-carousel-container">
+                    <button class="carousel-button carousel-prev" id="video-prev">&#10094;</button>
+                    <div class="carousel-track" id="video-carousel-track">
+                        <div class="carousel-item active">
+                            <img src="{% static 'img/theme/Mastering-the-Dashboard.png' %}" alt="Mastering the Dashboard">
+                            <div class="play-icon">&#9654;</div>
+                            <p>{% trans "Mastering the Dashboard" %}</p>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'img/theme/All-About-CEO-Network.png' %}" alt="All About CEO Network">
+                            <div class="play-icon">&#9654;</div>
+                            <p>{% trans "All About CEO Network" %}</p>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'img/theme/How-to-talk-to-your-cutomer-online.png' %}" alt="How to talk to your customer online">
+                            <div class="play-icon">&#9654;</div>
+                            <p>{% trans "How to talk to your customer online" %}</p>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="{% static 'img/theme/Seller-Course-360.png' %}" alt="Seller Course 360">
+                            <div class="play-icon">&#9654;</div>
+                            <p>{% trans "Seller Course 360" %}</p>
+                        </div>
+                    </div>
+                    <button class="carousel-button carousel-next" id="video-next">&#10095;</button>
+                    <div class="carousel-nav" id="video-carousel-nav"></div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+{# ── Detailed stats (orders / customers / catalogue / offers) ── #}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-shopping-cart me-1"></i> {% trans "Orders – Last 24 Hours" %}</h5>
+                <table class="table table-sm">
+                    <tr><th>{% trans "Total orders" %}</th><td>{{ total_orders_last_day }}</td></tr>
+                    <tr><th>{% trans "Total lines" %}</th><td>{{ total_lines_last_day }}</td></tr>
+                    <tr><th>{% trans "Total revenue" %}</th><td>{{ total_revenue_last_day|currency }}</td></tr>
+                    <tr><th>{% trans "Avg order value" %}</th><td>{{ average_order_costs|currency }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0"><i class="fas fa-shopping-cart me-1"></i> {% trans "Orders – All Time" %}</h5>
+                    <a href="{% url 'dashboard:order-list' %}" class="btn btn-xs">{% trans "Manage" %}</a>
+                </div>
+                <table class="table table-sm">
+                    <tr><th>{% trans "Total orders" %}</th><td>{{ total_orders }}</td></tr>
+                    <tr><th>{% trans "Total lines" %}</th><td>{{ total_lines }}</td></tr>
+                    <tr><th>{% trans "Total revenue" %}</th><td>{{ total_revenue|currency }}</td></tr>
+                    <tr><th>{% trans "Open baskets" %}</th><td>{{ total_open_baskets }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users me-1"></i> {% trans "Customers" %}</h5>
+                <table class="table table-sm">
+                    <tr><th>{% trans "Total customers" %}</th><td>{{ total_customers }}</td></tr>
+                    <tr><th>{% trans "New customers" %}</th><td>{{ total_customers_last_day }}</td></tr>
+                    <tr><th>{% trans "Open baskets" %}</th><td>{{ total_open_baskets_last_day }}</td></tr>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
-
-<div class="row">
-    <div class="col-md-4">
-        <table class="table table-striped table-bordered table-hover">
-            <caption><i class="fas fa-shopping-cart"></i> {% trans "Orders - Last 24 Hours" %}</caption>
-            <tr>
-                <th class="col-md-10">{% trans "Total orders" %}</th>
-                <td class="col-md-2" >{{ total_orders_last_day }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total lines" %}</th>
-                <td class="col-md-2" >{{ total_lines_last_day }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total revenue" %}</th>
-                <td class="col-md-2" >{{ total_revenue_last_day|currency }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Average order costs" %}</th>
-                <td class="col-md-2" >{{ average_order_costs|currency }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="col-md-4">
-        <table class="table table-striped table-bordered table-hover">
-            <caption>
-                <a href="{% url 'dashboard:order-list' %}" class="btn btn-secondary float-right">
-                    <i class="fas fa-shopping-cart"></i> {% trans "Manage" %}
-                </a>
-                <i class="fas fa-shopping-cart"></i> {% trans "Orders - All Time" %}
-            </caption>
-            <tr>
-                <th class="col-md-10">{% trans "Total orders" %}</th>
-                <td class="col-md-2" >{{ total_orders }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total lines" %}</th>
-                <td class="col-md-2" >{{ total_lines }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total revenue" %}</th>
-                <td class="col-md-2" >{{ total_revenue|currency }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total <em>open</em> baskets" %}</th>
-                <td class="col-md-2" >{{ total_open_baskets }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="col-md-4">
-        <table class="table table-striped table-bordered table-hover">
-            <caption><i class="fas fa-users"></i> {% trans "Customers" %}</caption>
-            <tr>
-                <th class="col-md-10">{% trans "Total customers" %}</th>
-                <td class="col-md-2" >{{ total_customers }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "New customers" %}</th>
-                <td class="col-md-2" >{{ total_customers_last_day }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "Total <em>open</em> baskets" %}</th>
-                <td class="col-md-2" >{{ total_open_baskets_last_day }}</td>
-            </tr>
-        </table>
-    </div>
-</div>
-
 <div class="row">
     <div class="col-md-6">
-        <table class="table table-striped table-bordered table-hover">
-            <caption>
-                <div class="btn-toolbar float-right">
-                    <div class="btn-group">
-                        <a href="{% url 'dashboard:catalogue-product-list' %}" class="btn btn-secondary">
-                            <i class="fas fa-sitemap"></i> {% trans "Manage" %}
-                        </a>
-                    </div>
-                    <div class="btn-group ml-2">
-                        <a href="{% url 'dashboard:stock-alert-list' %}" class="btn btn-secondary">
-                            <i class="fas fa-sitemap"></i> {% trans "View Stock Alerts" %}
-                        </a>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title mb-0"><i class="fas fa-sitemap me-1"></i> {% trans "Catalogue &amp; Stock" %}</h5>
+                    <div>
+                        <a href="{% url 'dashboard:catalogue-product-list' %}" class="btn btn-xs me-1">{% trans "Products" %}</a>
+                        <a href="{% url 'dashboard:stock-alert-list' %}" class="btn btn-xs">{% trans "Stock Alerts" %}</a>
                     </div>
                 </div>
-                <i class="fas fa-sitemap"></i> {% trans "Catalogue and stock" %}
-            </caption>
-            <tr>
-                <th class="col-md-10">{% trans "Total products" %}</th>
-                    <td class="col-md-2" >{{ total_products }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "<em>Open</em> stock alerts" %}</th>
-                    <td class="col-md-2" >{{ total_open_stock_alerts }}</td>
-            </tr>
-            <tr>
-                <th class="col-md-10">{% trans "<em>Closed</em> stock alerts" %}</th>
-                    <td class="col-md-2" >{{ total_closed_stock_alerts }}</td>
-            </tr>
-        </table>
+                <table class="table table-sm">
+                    <tr><th>{% trans "Total products" %}</th><td>{{ total_products }}</td></tr>
+                    <tr><th>{% trans "Open stock alerts" %}</th><td>{{ total_open_stock_alerts }}</td></tr>
+                    <tr><th>{% trans "Closed stock alerts" %}</th><td>{{ total_closed_stock_alerts }}</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
+    {% if user.is_staff %}
     <div class="col-md-6">
-        {% if user.is_staff %}
-        <table class="table table-striped table-bordered table-hover">
-            <caption><i class="fas fa-gift"></i> {% trans "Offers, vouchers" %}</caption>
-            {% for offer_map in offer_maps %}
-            <tr>
-                <th class="col-md-10">{% blocktrans with offer_type=offer_map.offer_type %}Active <em>{{ offer_type }}</em> Offers{% endblocktrans %}</th>
-                <td class="col-md-2" >{{ offer_map.count }}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <th class="col-md-10">{% trans "Active <em>Vouchers</em>" %}</th>
-                <td class="col-md-2" >{{ total_vouchers }}</td>
-            </tr>
-        </table>
-        {% endif %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-gift me-1"></i> {% trans "Offers &amp; Vouchers" %}</h5>
+                <table class="table table-sm">
+                    {% for offer_map in offer_maps %}
+                    <tr>
+                        <th>{% blocktrans with offer_type=offer_map.offer_type %}Active {{ offer_type }} Offers{% endblocktrans %}</th>
+                        <td>{{ offer_map.count }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr><th>{% trans "Active Vouchers" %}</th><td>{{ total_vouchers }}</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
+    {% endif %}
 </div>
+
+<script>
+// Image Carousel
+(function(){
+    const track = document.getElementById('image-carousel-track');
+    if (!track) return;
+    const items = track.querySelectorAll('.carousel-item');
+    const nav = document.getElementById('image-carousel-nav');
+    let current = 0;
+    items.forEach(function(_, i) {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', function() { goToSlide(i); });
+        nav.appendChild(dot);
+    });
+    const dots = nav.querySelectorAll('.carousel-dot');
+    function goToSlide(index) {
+        items[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = index;
+        items[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+    window.changeImageSlide = function(step) { goToSlide((current + step + items.length) % items.length); };
+    setInterval(function() { window.changeImageSlide(1); }, 4000);
+})();
+
+// Video Carousel
+(function(){
+    const track = document.getElementById('video-carousel-track');
+    if (!track) return;
+    const items = track.querySelectorAll('.carousel-item');
+    const nav = document.getElementById('video-carousel-nav');
+    let current = 0;
+    items.forEach(function(_, i) {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.dataset.index = i;
+        nav.appendChild(dot);
+    });
+    const dots = nav.querySelectorAll('.carousel-dot');
+    function goToSlide(index) {
+        items[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = index;
+        items[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+    dots.forEach(function(dot) {
+        dot.addEventListener('click', function() { goToSlide(+dot.dataset.index); });
+    });
+    const prevBtn = document.getElementById('video-prev');
+    const nextBtn = document.getElementById('video-next');
+    if (prevBtn) prevBtn.addEventListener('click', function() { goToSlide((current - 1 + items.length) % items.length); });
+    if (nextBtn) nextBtn.addEventListener('click', function() { goToSlide((current + 1) % items.length); });
+    setInterval(function() { goToSlide((current + 1) % items.length); }, 5000);
+})();
+</script>
+
 {% endblock %}

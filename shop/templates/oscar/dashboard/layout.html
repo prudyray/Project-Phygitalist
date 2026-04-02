@@ -5,10 +5,13 @@
 {% load i18n %}
 {% load static %}
 {% load site_urls %}
+{% load cms_tags %}
+{% load djangocms_alias_tags %} 
 
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{% static "oscar/css/dashboard.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/demo/main.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/sections/dashboard.css' %}">
 {% endblock %}
 
@@ -17,7 +20,34 @@
     <link rel="stylesheet" href="{% static "oscar/js/select2/select2.min.css" %}" />
     <link rel="stylesheet" href="{% static "oscar/css/select2-bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "oscar/js/bootstrap4-datetimepicker/tempusdominus-bootstrap-4.min.css" %}" />
-    <link rel="stylesheet" href="{% static "css/navbar.css" %}" />
+    <style>
+        .popup-content {
+          visibility: hidden;
+          width: 160px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          padding: 5px;
+          border-radius: 6px;
+
+          /* Position the popup above the text */
+          position: absolute;
+          z-index: 1;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -80px; /* Center the popup */
+
+          /* Add a smooth fade-in effect */
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+
+        .popup-container:hover .popup-content {
+          visibility: visible;
+          opacity: 1;
+        }
+
+    </style>
 {% endblock %}
 
 {% block title %}
@@ -28,238 +58,167 @@
 {% endblock %}
 
 {% block layout %}
-    {% block navbar %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-accounts">
-            <a class="navbar-brand" href="#">&nbsp;</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#top_nav_bar" aria-controls="top_nav_bar" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
 
-            <div class="collapse navbar-collapse" id="top_nav_bar">
-                <ul class="navbar-nav mr-auto"></ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link disabled" href="#">
-                            {% trans "Welcome" %} <em>{% if request.user.is_anonymous %}anonymous{% else %}{{ user.get_full_name|default:request.user.email }}{% endif %}</em>
-                        </a>
-                    </li>
-                    {% if request.user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin:index' %}">Admin Site</a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ homepage_url }}"><i class="fas fa-home"></i> {% trans "Return to site" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'customer:summary' %}"><i class="fas fa-user"></i> {% trans "Account" %}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt"></i> {% trans "Log out" %}</a>
-                    </li>
-                </ul>
-          </div>
-        </nav>
-    {% endblock navbar %}
-
-    {% block dashboard_nav %}
-        {% dashboard_navigation user as nav_items %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-primary">
-            <button class="navbar-toggler float-right" type="button" data-toggle="collapse" data-target="#bottom_nav_bar" aria-controls="bottom_nav_bar" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <div class="collapse navbar-collapse" id="bottom_nav_bar">
-                <ul class="navbar-nav">
-                    {% for item in nav_items %}
-                        <li class="nav-item {% if item.has_children %}dropdown{% endif %}">
-                            <a class="nav-link {% if item.has_children %}dropdown-toggle{% endif %}"
-                               href="{% if item.is_heading %}#{% else %}{{ item.url }}{% endif %}"
-                               {% if item.has_children %}id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"{% endif %}
-                            >
-                                {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
-                                {{ item.label }}
-                            </a>
-
-                            {% if item.has_children %}
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    {% for subitem in item.children %}
-                                        <a class="dropdown-item" href="{{ subitem.url }}">
-                                            {% if subitem.icon %}<i class="{{ subitem.icon }}"></i>{% endif %}
-                                            {{ subitem.label }}
-                                        </a>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                    {% block extra_dashboard_nav %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% site_url SITE_SELLER 'dashboard-seller' %}" role="button">Seller Information</a>
-                        </li>
-                    {% endblock %}
-                </ul>
-            </div>
-        </nav>
-    {% endblock %}
-
-    <div class="container-fluid">
-        {% block breadcrumbs %}
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
-                    </li>
-                </ol>
-            </nav>
-        {% endblock %}
-
-        <div class="content">
-            {% include 'oscar/dashboard/partials/alert_messages.html' %}
-            {% block header %}
-            <div class="page-header">
-                <h1 class="header-user">{% block headertext %}{% endblock %}</h1>
-            </div>
-            {% endblock %}
-            <div class="page-content">
-                {% block content %}
-                    {% block sidebar %}
-                <!-- <h1>Sidebar</h1> -->
-                <!--
-                       <aside class="navbar-aside ps ps--active-y" id="offcanvas_aside">
+    {# ── Sidebar ── #}
+    {% dashboard_navigation user as nav_items %}
+    <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="index.html" class="brand-wrap">
-                <img src="{% static 'img/theme/logo_zit69_dashboard.png' %}" class="logo" alt="Evara Dashboard">
+            <a href="{% url 'dashboard:index' %}" class="brand-wrap">
+                <img src="{% static 'img/theme/logo_zit69_dashboard.png' %}" class="logo" alt="zite69 Dashboard">
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize"><i class="text-muted material-icons md-menu_open"></i></button>
             </div>
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
-                        <span class="text">Your Dashboard</span>
+                {% for item in nav_items %}
+                <li class="menu-item {% if item.has_children %}has-submenu{% endif %}">
+                    <a class="menu-link" href="{% if item.is_heading %}#{% else %}{{ item.url }}{% endif %}">
+                        {% if item.icon %}<i class="icon material-icons {{ item.icon }}"></i>{% endif %}
+                        <span class="text">{{ item.label }}</span>
                     </a>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
-                        <span class="text">Products</span>
-                    </a>
+                    {% if item.has_children %}
                     <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="page-categories.html">Categories</a>
+                        {% for child in item.children %}
+                        <a {% if not child.active %}class="text-decoration-line-through popup-container" data-bs-toggle="tooltip"
+                            data-bs-placement="top" data-bs-title="Coming Soon"
+                            {% endif %} href="{{ child.url }}">{{ child.label }}</a>
+                        {% if not child.active %}<span class="popup-content">Coming Soon</span>{% endif %}
+                        {% endfor %}
                     </div>
+                    {% endif %}
                 </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-orders-1.html">Order list 1</a>
-                        <a href="page-orders-2.html">Order list 2</a>
-                        <a href="page-orders-detail.html">Order detail</a>
-                        <a href="page-orders-tracking.html">Order tracking</a>
-<a href="page-invoice.html">Invoice</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
-                        <span class="text">Sellers</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-sellers-cards.html">Sellers cards</a>
-                        <a href="page-sellers-list.html">Sellers list</a>
-                        <a href="page-seller-detail.html">Seller profile</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-form-product-1.html">Add product 1</a>
-                        <a href="page-form-product-2.html">Add product 2</a>
-                        <a href="page-form-product-3.html">Add product 3</a>
-                        <a href="page-form-product-4.html">Add product 4</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
-                        <span class="text">Transactions</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-transactions-1.html">Transaction 1</a>
-                        <a href="page-transactions-2.html">Transaction 2</a>
-                        <a href="page-transactions-details.html">Transaction Details</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-account-login.html">User login</a>
-                        <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a>
-                    </div>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
-                        <span class="text">Reviews</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
-                        <span class="text">Brands</span> </a>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" disabled="" href="#"> <i class="icon material-icons md-pie_chart"></i>
-                        <span class="text">Statistics</span>
-                    </a>
-                </li>
+                {% endfor %}
             </ul>
-            <hr>
-            <ul class="menu-aside">
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
-                        <span class="text">Settings</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-settings-1.html">Setting sample 1</a>
-                        <a href="page-settings-2.html">Setting sample 2</a>
-                    </div>
-                </li>
-                <li class="menu-item">
-                    <a class="menu-link" href="page-blank.html"> <i class="icon material-icons md-local_offer"></i>
-                        <span class="text"> Starter page </span>
-                    </a>
-                </li>
-            </ul>
-            <br>
-            <br>
+            <br><br>
         </nav>
-    <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 375px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 182px;"></div></div></aside>
-                -->
-                    {% endblock %}
+    </aside>
 
+    {# ── Main wrap ── #}
+    <main class="main-wrap">
 
-                    {% block dashboard_content %}{% endblock dashboard_content %}
-                {% endblock content %}
+        {# ── Top header ── #}
+        <header class="main-header navbar header-area">
+            <div class="col-search">
+                <form class="searchform" method="get" action="{% url 'dashboard:catalogue-product-list' %}">
+                    <div class="input-group">
+                        <input type="text" name="title" class="form-control" placeholder="Search products&hellip;">
+                        <button class="btn btn-light bg" type="submit"><i class="material-icons md-search"></i></button>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div><!-- /container -->
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside">
+                    <i class="material-icons md-apps"></i>
+                </button>
+                <ul class="nav">
+                    {# Notifications #}
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                        </a>
+                    </li>
+                    {# Dark mode toggle #}
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#" title="{% trans 'Toggle dark mode' %}">
+                            <i class="material-icons md-nights_stay"></i>
+                        </a>
+                    </li>
+                    {# Fullscreen #}
+                    <li class="nav-item">
+                        <a class="requestfullscreen nav-link btn-icon" href="#" title="{% trans 'Fullscreen' %}">
+                            <i class="material-icons md-cast"></i>
+                        </a>
+                    </li>
+                    {# Language #}
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false" title="{% trans 'Language' %}">
+                            <i class="material-icons md-public"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="{% static 'img/theme/flag-us.png' %}" alt="English"> English</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'img/theme/flag-fr.png' %}" alt="Français"> Français</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'img/theme/flag-jp.png' %}" alt="日本語"> 日本語</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'img/theme/flag-cn.png' %}" alt="中国人"> 中国人</a>
+                        </div>
+                    </li>
+                    {# User account #}
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">
+                            <img class="img-xs rounded-circle" src="{% static 'img/people/avatar2.jpg' %}" alt="{% trans 'User' %}">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <div class="dropdown-header">
+                                <strong>{% if request.user.is_anonymous %}{% trans "Guest" %}{% else %}{{ user.get_full_name|default:request.user.email }}{% endif %}</strong>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'customer:summary' %}"><i class="material-icons md-perm_identity"></i> {% trans "Edit Profile" %}</a>
+                            <a class="dropdown-item" href="{{ homepage_url }}"><i class="material-icons md-storefront"></i> {% trans "Return to site" %}</a>
+                            {% block extra_header_nav %}
+                                <a class="dropdown-item" href="{% site_url SITE_SELLER 'dashboard-seller' %}"><i class="material-icons md-store"></i> Seller Information</a>
+                            {% endblock %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="{% url 'account_logout' %}"><i class="material-icons md-exit_to_app"></i> {% trans "Log out" %}</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        {# ── CMS-editable notice bar (edit via CMS toolbar when logged in as staff) ── #}
+        {% static_alias "seller_dashboard_notice" %}
+
+        {# ── Page content ── #}
+        <section class="content-main">
+            {% include 'oscar/dashboard/partials/alert_messages.html' %}
+
+            {% block breadcrumbs %}
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <a href="{% url 'dashboard:index' %}">{% trans "Dashboard" %}</a>
+                        </li>
+                    </ol>
+                </nav>
+            {% endblock %}
+
+            {% block header %}
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">{% block headertext %}{% endblock %}</h2>
+                    </div>
+                </div>
+            {% endblock %}
+
+            {% block content %}
+                {% block dashboard_content %}{% endblock dashboard_content %}
+            {% endblock content %}
+        </section>
+
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    &copy; <script>document.write(new Date().getFullYear())</script> zite69.com
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">All rights reserved</div>
+                </div>
+            </div>
+        </footer>
+
+    </main>{# /main-wrap #}
 
 {% endblock %}
 
 {# Local scripts #}
 {% block scripts %}
-    <!-- Twitter Bootstrap -->
+    <script src="{% static 'js/vendors/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'js/vendors/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static "oscar/js/bootstrap4/bootstrap.bundle.min.js" %}"></script>
-    <!-- Oscar -->
     <script src="{% static "oscar/js/oscar/ui.js" %}"></script>
+    <script src="{% static 'js/demo.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
 {% endblock %}
 
 {% block extrascripts %}
@@ -286,6 +245,13 @@
     if (url.match('#')) {
         $('.bs-docs-sidenav a[href="#' + url.split('#')[1] + '"]').tab('show');
     }
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    console.log(tooltipTriggerList);
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    console.log(tooltipList);
 
     // Change hash for page-reload
     $('.nav-list a').on('shown.bs.tab', function (e) {

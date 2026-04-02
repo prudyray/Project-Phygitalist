@@ -405,9 +405,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # This is a django CMS 4 template
 
 CMS_CONFIRM_VERSION4 = True
-CMS_TOOLBAR_HIDE = [
-    r'^/dashboard/.*'
-]
+CMS_TOOLBAR_HIDE = []
 
 # django CMS requires the site framework
 # https://docs.django-cms.org/en/release-4.1.x/how_to/multi-site.html
@@ -553,6 +551,176 @@ PHONENUMBER_DB_FORMAT = "RFC3966"
 PHONENUMBER_DEFAULT_FORMAT = "RFC3966"
 
 OSCAR_PRODUCTS_PER_PAGE = 20
+
+# ── Seller Dashboard Sidebar Navigation ─────────────────────────────────────
+# Icons use Material Icons suffix only (e.g. "md-home").
+# Template renders: <i class="icon material-icons {{ item.icon }}"></i>
+# url_name=None items are headings (link to #). Placeholder children that
+# don't have their own Oscar view temporarily resolve to dashboard:index.
+OSCAR_DASHBOARD_NAVIGATION = [
+    {
+        "label": _("Dashboard"),
+        "icon": "md-home",
+        "url_name": "dashboard:index",
+    },
+    {
+        "label": _("Catalogue"),
+        "icon": "md-collections",
+        "children": [
+            {"label": _("My Products"),      "url_name": "dashboard:catalogue-product-list", "active": True},
+            {"label": _("Add New Product"),  "url_name": "dashboard:catalogue-product-create", "active": True},
+            {"label": _("Finish Listings"),  "url_name": "dashboard:index"},
+            {"label": _("QC Tracker"),       "url_name": "dashboard:index"},
+            {"label": _("Image Suite"),      "url_name": "dashboard:index"},
+            {"label": _("AI Image Enhance"), "url_name": "dashboard:index"},
+            {"label": _("Description Gen AI"),"url_name": "dashboard:index"},
+            {"label": _("AI Video Creator"), "url_name": "dashboard:index"},
+            {"label": _("Catalogue Tips"),   "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Inventory"),
+        "icon": "md-category",
+        "children": [
+            {"label": _("All Inventory"),         "url_name": "dashboard:catalogue-product-list", "active": True},
+            {"label": _("Active"),                "url_name": "dashboard:index"},
+            {"label": _("Inactive"),              "url_name": "dashboard:index"},
+            {"label": _("Visibility Controlled"), "url_name": "dashboard:index"},
+            {"label": _("Delisted"),              "url_name": "dashboard:index"},
+            {"label": _("Low Stock"),             "url_name": "dashboard:stock-alert-list", "active": True},
+            {"label": _("Out of Stock"),          "url_name": "dashboard:index"},
+            {"label": _("Guidance"),              "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Orders"),
+        "icon": "md-shopping_cart",
+        "children": [
+            {"label": _("Current Orders"),  "url_name": "dashboard:order-list", "active": True},
+            {"label": _("Manage Orders"),   "url_name": "dashboard:order-list", "active": True},
+            {"label": _("Order Reports"),   "url_name": "dashboard:index"},
+            {"label": _("Returns"),         "url_name": "dashboard:index"},
+            {"label": _("Cancellations"),   "url_name": "dashboard:index"},
+            {"label": _("Return Reducer"),  "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Payments"),
+        "icon": "md-payments",
+        "children": [
+            {"label": _("Invoices"),          "url_name": "dashboard:index"},
+            {"label": _("Previous Payment"),  "url_name": "dashboard:index"},
+            {"label": _("Pending Payment"),   "url_name": "dashboard:index"},
+            {"label": _("Order Settlements"), "url_name": "dashboard:index"},
+            {"label": _("Custom Report"),     "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Pricing"),
+        "icon": "md-monetization_on",
+        "children": [
+            {"label": _("Price Advisory"),     "url_name": "dashboard:index"},
+            {"label": _("Price Evaluator AI"), "url_name": "dashboard:index"},
+            {"label": _("Discount Methods"),   "url_name": "dashboard:offer-list", "active": True},
+            {"label": _("Freebie Planner"),    "url_name": "dashboard:index"},
+            {"label": _("Enable Fee Exemption"), "url_name": "dashboard:index", "active": True},
+        ],
+    },
+    {
+        "label": _("Growth"),
+        "icon": "md-trending_up",
+        "children": [
+            {"label": _("Milestone"),              "url_name": "dashboard:index"},
+            {"label": _("Business Health"),        "url_name": "dashboard:index"},
+            {"label": _("Target Manager"),         "url_name": "dashboard:index"},
+            {"label": _("Optimise Sales"),         "url_name": "dashboard:index"},
+            {"label": _("Enable Group Sales"),     "url_name": "dashboard:index"},
+            {"label": _("Enable Video Commerce"),  "url_name": "dashboard:index"},
+            {"label": _("Live Sale"),              "url_name": "dashboard:index"},
+            {"label": _("New Product Incubator"),  "url_name": "dashboard:index"},
+            {"label": _("Seller Rewards"),         "url_name": "dashboard:index"},
+            {"label": _("Refer a Seller"),         "url_name": "dashboard:index"},
+            {"label": _("Demand Forecasting"),     "url_name": "dashboard:index"},
+            {"label": _("Traffic & Trends"),       "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Ads & Promos"),
+        "icon": "md-campaign",
+        "children": [
+            {"label": _("Campaign Manager"),   "url_name": "dashboard:index"},
+            {"label": _("Vouchers"),           "url_name": "dashboard:voucher-list", "active": True},
+            {"label": _("Offers & Deals"),     "url_name": "dashboard:offer-list", "active": True},
+            {"label": _("Discounts"),          "url_name": "dashboard:index"},
+            {"label": _("Promotions"),         "url_name": "dashboard:index"},
+            {"label": _("Reports"),            "url_name": "dashboard:index"},
+            {"label": _("Ad Guide"),           "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Reports"),
+        "icon": "md-assessment",
+        "children": [
+            {"label": _("Create Custom Reports"), "url_name": "dashboard:reports-index", "active": True},
+            {"label": _("Docs Repository"),       "url_name": "dashboard:index"},
+            {"label": _("Request a New Report"),  "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Content"),
+        "icon": "md-description",
+        "children": [
+            {"label": _("Customize Shopfront"),       "url_name": "dashboard:index"},
+            {"label": _("Create Product Description"),"url_name": "dashboard:index"},
+            {"label": _("Image Suite"),               "url_name": "dashboard:index"},
+            {"label": _("Create & Upload Video"),     "url_name": "dashboard:index"},
+            {"label": _("Request Testimonials"),      "url_name": "dashboard:index"},
+            {"label": _("Content Central"),           "url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Services"),
+        "icon": "md-handyman",
+        "children": [
+            {"label": _("Partner Services"),        "url_name": "dashboard:index"},
+            {"label": _("Tax"),                     "url_name": "dashboard:index"},
+            {"label": _("Mentor Hiring"),           "url_name": "dashboard:index"},
+            {"label": _("Accounts & Finance"),      "url_name": "dashboard:index"},
+            {"label": _("Training & Development"),  "url_name": "dashboard:index"},
+            {"label": _("Content Services"),        "url_name": "dashboard:index"},
+            {"label": _("Submit a Service Request"),"url_name": "dashboard:index"},
+        ],
+    },
+    {
+        "label": _("Brand"),
+        "icon": "md-stars",
+        "url_name": "dashboard:index",
+    },
+    {
+        "label": _("Learning"),
+        "icon": "md-school",
+        "url_name": "dashboard:index",
+    },
+    {
+        "label": _("CEO Connect"),
+        "icon": "md-connect_without_contact",
+        "url_name": "dashboard:index",
+    },
+    {
+        "label": _("My Team"),
+        "icon": "md-people",
+        "url_name": "dashboard:index",
+    },
+    # Staff-only: Oscar automatically hides these for non-staff via permissions_map
+    {
+        "label": _("Admin"),
+        "icon": "md-admin_panel_settings",
+        "children": [
+            {"label": _("Users"),    "url_name": "dashboard:users-index", "active": True},
+            {"label": _("Partners"), "url_name": "dashboard:partner-list", "active": True},
+        ],
+    },
+]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
