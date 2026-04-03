@@ -564,11 +564,24 @@ OSCAR_DASHBOARD_NAVIGATION = [
         "url_name": "dashboard:index",
     },
     {
+        "label": _("My Profile"),
+        "icon": "md-person",
+        "url_name": "dashboard-seller",
+        "access_fn": "shop.apps.dashboard.menu.staff_access_fn",
+    },
+    {
         "label": _("Catalogue"),
         "icon": "md-collections",
         "children": [
             {"label": _("My Products"),      "url_name": "dashboard:catalogue-product-list", "active": True},
             {"label": _("Add New Product"),  "url_name": "dashboard:catalogue-product-create", "active": True},
+            {"label": _("Product Types"),    "url_name": "dashboard:catalogue-class-list", "active": True},
+            {"label": _("Create Product Type"), "url_name": "dashboard:catalogue-class-create", "active": True},
+            {"label": _("Categories"),       "url_name": "dashboard:catalogue-category-list", "active": True},
+            {"label": _("Ranges"),       "url_name": "dashboard:range-list", "active": True},
+            {"label": _("Stock Alerts"),       "url_name": "dashboard:stock-alert-list", "active": True},
+            {"label": _("Options"),          "url_name": "dashboard:catalogue-option-list", "active": True},
+            {"label": _("Options Group"),    "url_name": "dashboard:catalogue-attribute-option-group-list", "active": True},
             {"label": _("Finish Listings"),  "url_name": "dashboard:index"},
             {"label": _("QC Tracker"),       "url_name": "dashboard:index"},
             {"label": _("Image Suite"),      "url_name": "dashboard:index"},
@@ -598,11 +611,22 @@ OSCAR_DASHBOARD_NAVIGATION = [
         "children": [
             {"label": _("Current Orders"),  "url_name": "dashboard:order-list", "active": True},
             {"label": _("Manage Orders"),   "url_name": "dashboard:order-list", "active": True},
+            {"label": _("Statistics"),      "url_name": "dashboard:order-stats", "active": True},
+            {"label": _("Partners"),        "url_name": "dashboard:partner-list", "active": True},
             {"label": _("Order Reports"),   "url_name": "dashboard:index"},
             {"label": _("Returns"),         "url_name": "dashboard:index"},
             {"label": _("Cancellations"),   "url_name": "dashboard:index"},
             {"label": _("Return Reducer"),  "url_name": "dashboard:index"},
         ],
+    },
+    {
+        "label": _("Customers"),
+        "icon": "md-person",
+        "children": [
+            {"label": _("Customers List"),        "url_name": "dashboard:users-index", "active": True},
+            {"label": _("Stock Alert Requests"),  "url_name": "dashboard:user-alert-list", "active": True},
+
+        ]
     },
     {
         "label": _("Payments"),
@@ -651,6 +675,7 @@ OSCAR_DASHBOARD_NAVIGATION = [
             {"label": _("Campaign Manager"),   "url_name": "dashboard:index"},
             {"label": _("Vouchers"),           "url_name": "dashboard:voucher-list", "active": True},
             {"label": _("Offers & Deals"),     "url_name": "dashboard:offer-list", "active": True},
+            {"label": _("Vouchers Sets"),      "url_name": "dashboard:voucher-set-list", "active": True},
             {"label": _("Discounts"),          "url_name": "dashboard:index"},
             {"label": _("Promotions"),         "url_name": "dashboard:index"},
             {"label": _("Reports"),            "url_name": "dashboard:index"},
@@ -719,6 +744,7 @@ OSCAR_DASHBOARD_NAVIGATION = [
             {"label": _("Users"),    "url_name": "dashboard:users-index", "active": True},
             {"label": _("Partners"), "url_name": "dashboard:partner-list", "active": True},
         ],
+        "access_fn": "shop.apps.dashboard.menu.superuser_access_fn"
     },
 ]
 

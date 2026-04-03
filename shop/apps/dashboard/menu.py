@@ -17,6 +17,19 @@ def get_nodes(user):
     return visible_nodes
 
 
+def staff_access_fn(user, url_name, url_args=None, url_kwargs=None):
+    """Access function for non-dashboard URLs — bypasses OscarDashboardConfig lookup."""
+    return user.is_staff
+
+def superuser_access_fn(user, url_name, url_args=None, url_kwargs=None):
+    return user.is_superuser
+
+def _resolve_access_fn(value, default):
+    if value is None:
+        return default
+    return import_string(value) if isinstance(value, str) else value
+
+
 def create_menu(menu_items, parent=None):
     nodes = []
     default_fn = import_string(settings.OSCAR_DASHBOARD_DEFAULT_ACCESS_FUNCTION)
@@ -26,12 +39,13 @@ def create_menu(menu_items, parent=None):
         except KeyError:
             raise ImproperlyConfigured("No label specified for menu item in dashboard")
 
+        access_fn = _resolve_access_fn(menu_dict.get("access_fn"), default_fn)
         children = menu_dict.get("children", [])
         if children:
             node = Node(
                 label=label,
                 icon=menu_dict.get("icon", None),
-                access_fn=menu_dict.get("access_fn", default_fn),
+                access_fn=access_fn,
                 active=menu_dict.get("active", None),
             )
             create_menu(children, parent=node)
@@ -42,7 +56,7 @@ def create_menu(menu_items, parent=None):
                 url_name=menu_dict.get("url_name", None),
                 url_kwargs=menu_dict.get("url_kwargs", None),
                 url_args=menu_dict.get("url_args", None),
-                access_fn=menu_dict.get("access_fn", default_fn),
+                access_fn=access_fn,
                 active=menu_dict.get("active", None),
             )
         if parent is None:
