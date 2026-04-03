@@ -31,6 +31,7 @@ from shop.apps.webinar.views import CreateRegistrationView
 from shop.apps.main.views import LoginView, BuyQuickView, VideoDemoView
 from shop.apps.main.decorators import check_perm_404
 from shop.apps.seller.models import Seller
+from shop.apps.seller.views import SellerDetailView
 from django_downloadview import ObjectDownloadView
 from rules.contrib.views import objectgetter
 
@@ -59,6 +60,7 @@ urlpatterns = i18n_patterns(
     path('checkout/callback/', RazorpayCallbackView.as_view(), name='payment-callback'),
     path('referrals/', include('shop.apps.referrals.urls', namespace='referrals')),
     path('video/demo/', VideoDemoView.as_view(), name="video-demo"),
+    path('dashboard/seller/', SellerDetailView.as_view(), name="dashboard-seller"),
     path('', include(apps.get_app_config('main').urls[0])),
     path('', include('djangocms_forms.urls')),
     path('', include('cms.urls')),
