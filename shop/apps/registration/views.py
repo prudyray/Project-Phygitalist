@@ -678,4 +678,4 @@ class WelcomePage(View):
         request.user.is_staff = True
         request.user.save()
         logger.debug(f"Response after sending send_mail_mentor: {resp}")
-        return HttpResponseRedirect(reverse_lazy("demo"))
+        return HttpResponseRedirect(reverse_lazy("dashboard:index"))
