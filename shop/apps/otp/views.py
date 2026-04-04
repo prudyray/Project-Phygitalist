@@ -151,4 +151,4 @@ class OtpLoginView(FormView):
                 else:
                     return get_absolute_url(site_id=settings.SELLER_SITE_ID, view_name='registration-review')
 
-        return url
+        return get_absolute_url(site_id=settings.DEFAULT_SITE_ID)
