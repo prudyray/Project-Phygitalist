@@ -47,17 +47,23 @@ def send_phone_otp(phone, otp, sms_template=None):
     #SMS_MOCK_URL = f'https://private-anon-ccec9b3d62-smscountryapi.apiary-mock.com/v0.1/Accounts/{authkey}/SMSes/'
     SMS_MOCK_URL = f"https://private-anon-ed72d6af06-smscountryapi.apiary-mock.com/v0.1/Accounts/{authkey}/SMSes/"
 
-    if getattr(settings, "SMS_LIVE", False):
+    sms_live = getattr(settings, "SMS_LIVE", False)
+    if sms_live:
         url = SMS_PRODUCTION_URL
+        logger.debug(f"send_phone_otp: SMS_LIVE=True, using PRODUCTION URL")
     else:
         url = SMS_MOCK_URL
-    
+        logger.debug(f"send_phone_otp: SMS_LIVE=False, using MOCK URL")
+
+    logger.debug(f"send_phone_otp: posting to {url} with data={data}")
+
     resp = requests.post(url, data=json.dumps(data), headers=headers)
+    logger.debug(f"send_phone_otp: response status={resp.status_code}")
     try:
         json_resp = resp.json()
     except requests.exceptions.JSONDecodeError:
         json_resp = resp.text
-    
-    #logger.debug(f"Got response from SMS API: {json_resp}")
-    
+
+    logger.debug(f"send_phone_otp: response body={json_resp}")
+
     return json_resp

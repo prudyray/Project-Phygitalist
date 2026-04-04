@@ -122,13 +122,17 @@ class EmailPhoneOtpRequestForm(forms.Form):
         return email_phone
 
     def request_otp(self):
+        from django.conf import settings as django_settings
         User = get_user_model()
         data = self.cleaned_data.get("email_phone")
+        logger.debug(f"EmailPhoneOtpRequestForm.request_otp called for: {data}")
+        logger.debug(f"EmailPhoneOtpRequestForm.request_otp: SMS_LIVE={getattr(django_settings, 'SMS_LIVE', False)}")
 
         user_kw_args = {}
         generate_kw_args = {}
         valid_email = getattr(self, 'valid_email', False)
         valid_phone = getattr(self, 'valid_phone', False)
+        logger.debug(f"EmailPhoneOtpRequestForm.request_otp: valid_email={valid_email}, valid_phone={valid_phone}")
         logger.debug(logger.handlers)
         if valid_email:
             user_kw_args["email"] = data
@@ -143,7 +147,9 @@ class EmailPhoneOtpRequestForm(forms.Form):
 
         try:
             user = User.objects.get(**user_kw_args)
+            logger.debug(f"EmailPhoneOtpRequestForm.request_otp: found user={user}")
             otp = generate_otp(user, **generate_kw_args)
+            logger.debug(f"EmailPhoneOtpRequestForm.request_otp: generate_otp returned otp={'[SET]' if otp else '[EMPTY]'}")
             if otp:
                 if valid_email:
                     resp = send_email_otp(user.email, otp)
@@ -151,9 +157,12 @@ class EmailPhoneOtpRequestForm(forms.Form):
                 else:
                     resp = send_phone_otp(user.phone, otp)
                     logger.debug(f"Sent phone otp to user: {user} got response: {resp}")
+                return True
             else:
+                logger.error("EmailPhoneOtpRequestForm.request_otp: generate_otp returned falsy value")
                 raise ValueError(_("Generate OTP failed"))
         except User.DoesNotExist:
+            logger.warning(f"EmailPhoneOtpRequestForm.request_otp: User not found for {user_kw_args}")
             return False
 
 

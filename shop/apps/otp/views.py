@@ -26,12 +26,14 @@ logger = logging.getLogger('shop.apps.otp.views')
 
 class RequestOtpJsonView(View):
     def post(self, request, *args, **kwargs):
+        logger.debug("RequestOtpJsonView.post called")
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
            return JsonResponse({"error": "Invalid json input"})
 
         email_phone = data.get('email_phone', '')
+        logger.debug(f"RequestOtpJsonView: email_phone={email_phone}")
         valid_email = False
         valid_phone = False
         user_kw_args = {}
@@ -57,9 +59,12 @@ class RequestOtpJsonView(View):
             return JsonResponse({"error": "Invalid phone or email address"})
 
         User = get_user_model()
+        logger.debug(f"RequestOtpJsonView: user_kw_args={user_kw_args}, generate_kw_args={generate_kw_args}")
         try:
             user = User.objects.get(**user_kw_args)
+            logger.debug(f"RequestOtpJsonView: found user={user}")
             otp = generate_otp(user, **generate_kw_args)
+            logger.debug(f"RequestOtpJsonView: generate_otp returned otp={'[SET]' if otp else '[EMPTY]'}")
             if otp:
                 if valid_email:
                     resp = send_email_otp(user.email, otp)
@@ -68,11 +73,14 @@ class RequestOtpJsonView(View):
                     resp = send_phone_otp(user.phone, otp)
                     logger.debug(f"Sent phone otp to user: {user} got response: {resp}")
             else:
+                logger.error("RequestOtpJsonView: generate_otp returned falsy value")
                 return JsonResponse({"error": "Failed to generate OTP"})
         except User.DoesNotExist:
+            logger.warning(f"RequestOtpJsonView: User not found for kw_args={user_kw_args}")
             return JsonResponse({"error": "User does not exist"})
         self.request.session['email_phone'] = email_phone
         self.request.session['email_phone_field_type'] = 'email' if valid_email else 'phone'
+        logger.debug("RequestOtpJsonView: OTP successfully sent, returning 200")
         return JsonResponse({"code": 200, "message": "OTP successfully sent"})
 
 class RequestOtpView(FormView):
@@ -81,7 +89,9 @@ class RequestOtpView(FormView):
     success_url = reverse_lazy("otp:login")
 
     def form_valid(self, form: Any) -> HttpResponseRedirect:
-        form.request_otp()
+        logger.debug(f"RequestOtpView.form_valid: cleaned_data={form.cleaned_data}")
+        result = form.request_otp()
+        logger.debug(f"RequestOtpView.form_valid: request_otp() returned {result}")
         valid_email = getattr(form, 'valid_email', False)
         valid_phone = getattr(form, 'valid_phone', False)
         if not valid_email and not valid_phone:

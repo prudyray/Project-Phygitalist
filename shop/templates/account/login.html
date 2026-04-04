@@ -101,8 +101,8 @@ button.icon-button[type="submit"] {
                 <form action="{% url 'otp:login' %}" method="POST" id="otp-login">
                     {% csrf_token %}
                     {{ verify_code_form }}
-                    <button type="submit" class="loginb-button">Verify OTP</button>
-                    <button onclick="resendOTP()" class="loginb-button loginb-secondary">Resend OTP</button>
+                    <button type="submit" class="loginb-button" style="display:block;width:100%;">Verify OTP</button>
+                    <button type="button" onclick="resendOTP()" class="loginb-button loginb-secondary" style="display:block;width:100%;">Resend OTP</button>
                 </form>
             </div>
         
@@ -602,8 +602,18 @@ button.icon-button[type="submit"] {
         document.getElementById('successMessage').classList.remove('loginb-hidden');
     }
     
-    function resendOTP() {
-        document.getElementById('otp').value = '';
+    async function resendOTP() {
+        const emailPhone = document.querySelector("#otp-login #id_email_phone").value;
+        if (!emailPhone) {
+            alert("Session expired. Please enter your phone/email again.");
+            return;
+        }
+        const result = await requestOtp(emailPhone);
+        if (result.code === 200) {
+            alert("OTP has been resent. Please check your phone/email.");
+        } else {
+            alert("Failed to resend OTP: " + (result.error || "Unknown error"));
+        }
     }
 
 </script>  
