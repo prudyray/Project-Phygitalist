@@ -33,12 +33,12 @@ class UserManager(auth_models.BaseUserManager):
             email = username
             email = UserManager.normalize_email(email)
 
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_superuser', False)
         user = self.model(
             username=username,
             email=email,
-            is_staff=False,
-            is_active=True,
-            is_superuser=False,
             last_login=now,
             date_joined=now,
             **extra_fields
