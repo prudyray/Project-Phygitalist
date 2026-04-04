@@ -6,16 +6,16 @@
 {% endblock %}
 
 {% block styles %}
+    {{ block.super }}
     <link rel="stylesheet" type="text/css" href="{% static 'oscar/css/styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home.bundle.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/sections/dashboard.css' %}">
-{% endblock %} 
-
-{% block sidebar %}
 {% endblock %}
 
-{% block dashboard_nav %}
+{% block aside_nav %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>.main-wrap { margin-left: 0 !important; }</style>
 {% endblock %}
 
 {% block breadcrumbs %}

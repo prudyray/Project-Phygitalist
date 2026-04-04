@@ -94,6 +94,18 @@
   font-size: 14px;
 }
 
+/* Force light theme and consistent height on all form inputs regardless of CMS dark/auto mode */
+.onboarding-columns input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]),
+.onboarding-columns select,
+.onboarding-columns textarea,
+.onboarding-columns .form-control {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+    border-color: #ced4da !important;
+    color-scheme: light !important;
+    min-height: 38px !important;
+}
+
 .input-group input {
   width: 100%;
   padding: 12px;
@@ -249,12 +261,13 @@
     grid-template-columns: 1fr;
   }
 }
-.page-content{
+.onboarding-columns {
     display: flex;
     flex-direction: row;
+    gap: 20px;
 }
 @media (max-width: 768px) {
-  .page-content {
+  .onboarding-columns {
       flex-direction: column;
   }
 }

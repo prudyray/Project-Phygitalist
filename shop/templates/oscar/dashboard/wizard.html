@@ -16,6 +16,8 @@
     {% endaddtoblock %}
 {% endblock %}
 
+{% block aside_nav %}{% endblock %}
+
 {% block extrahead %}
 {{ block.super }}
 <style>
@@ -24,6 +26,9 @@
     height: 100%;
     background: #4caf50;
     border-radius: 4px;
+}
+.main-wrap {
+    margin-left: 0 !important;
 }
 </style>
 {% endblock %}
@@ -36,6 +41,7 @@
 
 {% block dashboard_content %}
         {{ registration_json|json_script:"registration" }}
+        <div class="onboarding-columns">
         <aside class="sidebar">
             <div class="progress-status">
                 <h3>Your onboarding completion status</h3>
@@ -108,10 +114,9 @@
                 </div>
             </section>
             <section>
-                <div class="input-group">
-                    <label>Pickup Pincode</label><span class="help-icon" data-bs-toggle="tooltip" title="Shop name requirements: • Must be between 4-30 characters • Can contain letters, numbers, and hyphens • Must be unique • Cannot contain special characters or spaces • Cannot start or end with a hyphen">?</span>
-                    <input type="text" id="id_pickup-pincode" value="{{ registration.postoffice.pincode }}" readonly="true">
-                     
+                <div>
+                    <label for="id_pickup-pincode">Pickup Pincode <span class="help-icon" data-bs-toggle="tooltip" title="Shop name requirements: • Must be between 4-30 characters • Can contain letters, numbers, and hyphens • Must be unique • Cannot contain special characters or spaces • Cannot start or end with a hyphen">?</span></label>
+                    <input type="text" id="id_pickup-pincode" class="form-control" value="{{ registration.postoffice.pincode }}" readonly="true">
                 </div>
             </section>
             <section id="pickup-section">
@@ -126,7 +131,17 @@
             <section id="tnc-section">
                   <div class="box_terms">
                     <h2 class="terms-link">Terms and Condition</h2>
-                    <button type="button" class="btn btn-primary" id="termsLink">Read &amp; Accept</a>
+                    {% if steps.pickup and steps.bank and steps.shipping %}
+                    <button type="button" class="btn btn-primary" id="termsLink">Read &amp; Accept</button>
+                    {% else %}
+                    <button type="button" class="btn btn-secondary" id="termsLink" disabled
+                        title="Please complete your Pickup Address, Bank Details and Seller/Shipping sections before accepting the Terms and Conditions">
+                        Read &amp; Accept
+                    </button>
+                    <p class="text-muted" style="font-size:13px;margin-top:8px;">
+                        Complete the Pickup Address, Bank Details and Seller &amp; Shipping sections above to unlock Terms &amp; Conditions.
+                    </p>
+                    {% endif %}
                   </div>
             </section>
         </main>
@@ -782,6 +797,7 @@ or other rights of 69Mutual Media & iCommerce LLP  or any third-party. 69Mutual 
             <p>If you would like their assistance,</p>
             <button class="btn btn-primary">Request a Callback</button>
         </aside>
+        </div>{# /onboarding-columns #}
 {% endblock %}
 
 {% block scripts %}
