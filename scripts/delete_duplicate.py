@@ -16,7 +16,7 @@ def run(*args):
     
     # Delete the duplicate entries
     if duplicates_to_delete:
-        #State.objects.filter(pk__in=[state.pk for state in duplicates_to_delete]).delete()
+        State.objects.filter(pk__in=[state.pk for state in duplicates_to_delete]).delete()
         print(f"Deleting {[state.pk for state in duplicates_to_delete]}")
         print(f"Deleted {len(duplicates_to_delete)} duplicate states.")
     else:
