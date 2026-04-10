@@ -345,9 +345,20 @@ HAYSTACK_CONNECTIONS = {
 #    }
 #}
 
-DATABASES = {
-    'default': env.db(default='sqlite:///db.sqlite3')
-}
+if DEBUG:
+    DATABASES = {
+        'default': env.db(default='sqlite:///db.sqlite3')
+    }
+else:
+    DATABASES = {
+          'default': {
+              **env.db(default='sqlite:///db.sqlite3'),
+              'CONN_MAX_AGE': 0,           # Let pgbouncer manage connections
+              'DISABLE_SERVER_SIDE_CURSORS': True,  # Required for transaction pooling
+          }
+    }
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
