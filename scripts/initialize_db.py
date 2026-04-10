@@ -27,7 +27,7 @@ def generate_password(length=10):
 def run(*args):
     # Populate State and Postoffice tables
     for k, v in STATE_CHOICES:
-        State.objects.create(code=k, name=v)
+        State.objects.get_or_create(code=k, defaults={'name': v})
 
     with gzip.open(settings.BASE_DIR / 'data/Pincode_30052019.csv.gz', 'rt', encoding='windows-1252') as f:
         reader = csv.reader(f)
