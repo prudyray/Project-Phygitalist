@@ -2,27 +2,27 @@
 {% load category_tags %}
 
 <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
-            <div class="container">
-                <div class="header-wrap">
-                    {% include "oscar/partials/brand.html" %}
-                    {% if settings.LIVE %}
-                    <div class="header-right">
-                        <div class="search-style-2">
-                                {% include "oscar/partials/search.html" %}
+    <div class="container">
+        <div class="header-wrap">
+            {% include "oscar/partials/brand.html" %}
+            {% if settings.LIVE %}
+            <div class="header-right">
+                <div class="search-style-2">
+                        {% include "oscar/partials/search.html" %}
+                </div>
+                <div class="header-action-right">
+                    <div class="header-action-2">
+                        <div class="header-action-icon-2">
+                            <a href="{% url 'customer:wishlists-list' %}">
+                                <img class="svgInject" alt="Evara" src="{% static 'img/theme/icons/icon-heart.svg' %}">
+                                <span class="pro-count blue">{% if request.user.is_authenticated %}{{ wishlists_count }}{% endif %}</span>
+                            </a>
                         </div>
-                        <div class="header-action-right">
-                            <div class="header-action-2">
-                                <div class="header-action-icon-2">
-                                    <a href="{% url 'customer:wishlists-list' %}">
-                                        <img class="svgInject" alt="Evara" src="{% static 'img/theme/icons/icon-heart.svg' %}">
-                                        <span class="pro-count blue">{% if request.user.is_authenticated %}{{ wishlists.count }}{% endif %}</span>
-                                    </a>
-                                </div>
-                                {% include "oscar/partials/mini_basket.html" %}
-                            </div>
-                        </div>
+                        {% include "oscar/partials/mini_basket.html" %}
                     </div>
-                    {% endif %}
                 </div>
             </div>
+            {% endif %}
         </div>
+    </div>
+</div>
