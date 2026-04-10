@@ -418,7 +418,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 CMS_CONFIRM_VERSION4 = True
 CMS_TOOLBAR_HIDE = []
-CMS_CACHE_DURATIONS = 120
+CMS_CACHE_DURATIONS = {
+    'content': 120,
+    'menus': 3600,
+    'permissions': 3600,
+}
 
 # django CMS requires the site framework
 # https://docs.django-cms.org/en/release-4.1.x/how_to/multi-site.html
