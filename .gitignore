@@ -7,6 +7,8 @@ pyrightconfig.json
 .claude
 requirements.current.txt
 CLAUDE.md
+graphify-out/
+shop/apps/graphify-out/
 
 *.log
 *.pot
