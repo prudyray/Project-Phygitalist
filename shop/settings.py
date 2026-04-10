@@ -1062,6 +1062,7 @@ if not CORS_ALLOWED_ORIGINS:
 
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS", default=False)
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS", default=[])
+CSRF_FAILURE_VIEW = 'shop.apps.main.views.csrf_failure'
 
 DEALER_TYPE = "git"
 

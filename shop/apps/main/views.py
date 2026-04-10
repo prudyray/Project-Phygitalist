@@ -110,3 +110,16 @@ def server_error(request, exception=None):
 
 def unauthorized(request, exception=None):
     return render(request, "error/403.html", {}, status=403)
+
+def csrf_failure(request, reason=""):
+    logger.error("CSRF FAILURE")
+    logger.error("reason=%r", reason)
+    logger.error("path=%r", request.path)
+    logger.error("method=%r", request.method)
+    logger.error("origin=%r", request.META.get("HTTP_ORIGIN"))
+    logger.error("referer=%r", request.META.get("HTTP_REFERER"))
+    logger.error("raw_cookie=%r", request.META.get("HTTP_COOKIE"))
+    logger.error("parsed_cookies=%r", request.COOKIES)
+    logger.error("csrf_cookie=%r", request.COOKIES.get("csrftoken"))
+    logger.error("post_csrf=%r", request.POST.get("csrfmiddlewaretoken"))
+    return HttpResponseForbidden("CSRF verification failed.")
