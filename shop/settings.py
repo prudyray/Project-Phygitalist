@@ -327,6 +327,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
+
 # HAYSTACK_CONNECTIONS = {
 #     'default': {
 #         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
@@ -1181,3 +1182,5 @@ if DEBUG == False:
 
     COMPRESS_ENABLED = True
     COMPRESS_OFFLINE = False
+
+    SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
