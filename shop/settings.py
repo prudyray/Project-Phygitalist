@@ -972,6 +972,13 @@ CACHES_ENV = env.json("CACHES", default={})
 if CACHES_ENV:
     CACHES = {}
     CACHES['default'] = CACHES_ENV
+elif env("VALKEY_URL", default=None):
+    CACHES = {
+        "default": {
+            "BACKEND": "django_valkey.cache.ValkeyCache",
+            "LOCATION": env("VALKEY_URL"),
+        }
+    }
 
 #allauth settings
 SOCIALACCOUNT_PROVIDERS = {
