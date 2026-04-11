@@ -61,10 +61,7 @@ class AutoCompleteView(View):
             body["table"] = defaults.PRODUCTS_TABLE
             response = search_api.search(body)
 
-            total = getattr(getattr(response, "hits", None), "total", 0)
             hits = getattr(getattr(response, "hits", None), "hits", None) or []
-            logger.warning("Autocomplete %r: total=%s hits=%s", q, total, len(hits))
-
             ids = []
             for h in hits:
                 raw_id = h.id
@@ -76,12 +73,10 @@ class AutoCompleteView(View):
                     except (ValueError, TypeError):
                         pass
 
-            logger.warning("Autocomplete %r: extracted ids=%s", q, ids)
             if not ids:
                 return []
 
             bulk = Product.objects.filter(pk__in=ids).in_bulk()
-            logger.warning("Autocomplete %r: bulk returned %s/%s", q, len(bulk), len(ids))
             seen = set()
             results = []
             for pk in ids:
