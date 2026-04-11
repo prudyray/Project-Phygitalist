@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'djangocms_link',
     'djangocms_icon',
     'django_select2',
+    'djangocms_transfer',
 
     'sekizai',
     'treebeard',
