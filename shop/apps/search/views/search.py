@@ -10,6 +10,7 @@ from shop.apps.search.views.base import BaseSearchView
 from shop.apps.search.forms import SearchForm
 from shop.apps.search import defaults
 from shop.apps.search.backend import get_client
+from shop.apps.search.queries import build_search_body, build_is_public_filter
 
 logger = logging.getLogger(__name__)
 
@@ -36,8 +37,9 @@ class AutoCompleteView(View):
 
     def _prefix_search(self, q):
         """
-        Prefix match via SearchApi, then fetch titles from the ORM.
-        Uses the same ID extraction as _hydrate_products so we know it works.
+        Prefix match via SearchApi (same path as the main search view).
+        Uses build_search_body so the query structure is identical to what works.
+        Fetches titles from ORM using the same ID extraction as _hydrate_products.
         """
         from oscar.core.loading import get_model
         Product = get_model("catalogue", "Product")
@@ -45,31 +47,34 @@ class AutoCompleteView(View):
         try:
             import manticoresearch
             search_api = manticoresearch.SearchApi(get_client())
-            safe_q = _escape_sql(q)
-            body = {
-                "table": defaults.PRODUCTS_TABLE,
-                "query": {
-                    "bool": {
-                        "must": [{"query_string": f"{safe_q}*"}],
-                        "filter": [{"equals": {"is_public": 1}}],
-                    }
-                },
-                "limit": self.MAX_RESULTS,
-                "sort": [{"_score": {"order": "desc"}}],
-            }
+
+            # Append * for prefix matching; same extended query syntax as MATCH()
+            q_prefix = f"{_escape_sql(q)}*"
+            body = build_search_body(
+                q=q_prefix,
+                filters=[build_is_public_filter()],
+                sort=["_score"],
+                size=self.MAX_RESULTS,
+                offset=0,
+                aggs=None,
+            )
+            body["table"] = defaults.PRODUCTS_TABLE
             response = search_api.search(body)
 
+            total = getattr(getattr(response, "hits", None), "total", 0)
+            hits = getattr(getattr(response, "hits", None), "hits", None) or []
+            logger.warning("Autocomplete %r: total=%s hits=%s", q, total, len(hits))
+
             ids = []
-            if response and hasattr(response, "hits") and response.hits:
-                for h in (response.hits.hits or []):
-                    raw_id = h.id
-                    if raw_id is None:
-                        raw_id = h.to_dict().get("_id")
-                    if raw_id is not None:
-                        try:
-                            ids.append(int(raw_id))
-                        except (ValueError, TypeError):
-                            pass
+            for h in hits:
+                raw_id = h.id
+                if raw_id is None:
+                    raw_id = h.to_dict().get("_id")
+                if raw_id is not None:
+                    try:
+                        ids.append(int(raw_id))
+                    except (ValueError, TypeError):
+                        pass
 
             if not ids:
                 return []
