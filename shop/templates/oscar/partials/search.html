@@ -10,5 +10,31 @@
         <option value="{{category.id}}">{{ category.name }}</option>
         {% endfor %}
     </select>
-    <input name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}">
+    <input id="search-autocomplete-input" name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}" autocomplete="off">
 </form>
+
+<script>
+(function ($) {
+    $(function () {
+        var $input = $('#search-autocomplete-input');
+        if (!$input.length || typeof $.fn.autocomplete === 'undefined') return;
+
+        var autocompleteUrl = '{% site_url SITE_BUYER "search:autocomplete" %}';
+
+        $input.autocomplete({
+            minLength: 3,
+            delay: 200,
+            source: function (request, response) {
+                $.getJSON(autocompleteUrl, { q: request.term }, function (data) {
+                    response(data.results || []);
+                }).fail(function () { response([]); });
+            },
+            select: function (event, ui) {
+                $input.val(ui.item.value);
+                $input.closest('form').submit();
+                return false;
+            }
+        });
+    });
+}(jQuery));
+</script>

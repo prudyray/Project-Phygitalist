@@ -12,14 +12,18 @@ class SearchConfig(OscarConfig):
 
     def ready(self):
         super().ready()
-        from shop.apps.search.views import SearchView, CatalogueView, ProductCategoryView
+        from shop.apps.search.views import (
+            SearchView, CatalogueView, ProductCategoryView, AutoCompleteView
+        )
 
         self.search_view = SearchView
         self.catalogue_view = CatalogueView
         self.category_view = ProductCategoryView
+        self.autocomplete_view = AutoCompleteView
 
     def get_urls(self):
         urls = [
             path("", self.search_view.as_view(), name="search"),
+            path("autocomplete/", self.autocomplete_view.as_view(), name="autocomplete"),
         ]
         return self.post_process_urls(urls)
