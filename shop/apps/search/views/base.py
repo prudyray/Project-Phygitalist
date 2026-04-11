@@ -147,13 +147,22 @@ class BaseSearchView(ListView):
         """
         Resolve hit IDs to Product ORM objects in a single query,
         preserving the Manticore-scored order.
+
+        Note: HitsHits.id uses StrictInt with alias '_id', but Manticore
+        returns _id as a string in JSON. Use to_dict() to get the raw value.
         """
         if not hits:
             return []
         ids = []
         for h in hits:
             try:
-                ids.append(int(h.id))
+                # h.id may be None if Manticore returned "_id" as a string
+                # (StrictInt won't coerce). Fall back to the aliased dict.
+                raw_id = h.id
+                if raw_id is None:
+                    raw_id = h.to_dict().get("_id")
+                if raw_id is not None:
+                    ids.append(int(raw_id))
             except (AttributeError, TypeError, ValueError):
                 pass
         if not ids:
