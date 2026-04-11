@@ -48,10 +48,7 @@ class SearchPage:
     def __init__(self, paginator, number):
         self.paginator = paginator
         self.number = number
-
-    @property
-    def object_list(self):
-        return []  # Filled by the view
+        self.object_list = []
 
     def start_index(self):
         return (self.number - 1) * self.paginator.page_size + 1

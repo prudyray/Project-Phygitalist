@@ -167,7 +167,7 @@ def build_search_body(
     if filters:
         query = {
             "bool": {
-                "must": query_clause,
+                "must": [query_clause],
                 "filter": filters,
             }
         }
