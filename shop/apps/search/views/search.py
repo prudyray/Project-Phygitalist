@@ -35,32 +35,55 @@ class AutoCompleteView(View):
         return JsonResponse({"results": suggestions})
 
     def _prefix_search(self, q):
-        """SELECT titles from Manticore matching the prefix."""
+        """
+        Prefix match via SearchApi, then fetch titles from the ORM.
+        Uses the same ID extraction as _hydrate_products so we know it works.
+        """
+        from oscar.core.loading import get_model
+        Product = get_model("catalogue", "Product")
+
         try:
             import manticoresearch
-            utils_api = manticoresearch.UtilsApi(get_client())
+            search_api = manticoresearch.SearchApi(get_client())
             safe_q = _escape_sql(q)
-            sql = (
-                f"SELECT title FROM {defaults.PRODUCTS_TABLE} "
-                f"WHERE MATCH('{safe_q}*') AND is_public=1 "
-                f"LIMIT {self.MAX_RESULTS}"
-            )
-            resp = utils_api.sql(sql)
-            # resp is a list of result-set objects; each has a .data attr
-            # containing a list of row dicts like {"title": "..."}
-            results = []
+            body = {
+                "table": defaults.PRODUCTS_TABLE,
+                "query": {
+                    "bool": {
+                        "must": [{"query_string": f"{safe_q}*"}],
+                        "filter": [{"equals": {"is_public": 1}}],
+                    }
+                },
+                "limit": self.MAX_RESULTS,
+                "sort": [{"_score": {"order": "desc"}}],
+            }
+            response = search_api.search(body)
+
+            ids = []
+            if response and hasattr(response, "hits") and response.hits:
+                for h in (response.hits.hits or []):
+                    raw_id = h.id
+                    if raw_id is None:
+                        raw_id = h.to_dict().get("_id")
+                    if raw_id is not None:
+                        try:
+                            ids.append(int(raw_id))
+                        except (ValueError, TypeError):
+                            pass
+
+            if not ids:
+                return []
+
+            bulk = Product.objects.filter(pk__in=ids).in_bulk()
             seen = set()
-            for result_set in (resp or []):
-                if isinstance(result_set, dict):
-                    rows = result_set.get("data") or []
-                else:
-                    rows = getattr(result_set, "data", None) or []
-                for row in rows:
-                    title = row.get("title") if isinstance(row, dict) else getattr(row, "title", None)
-                    if title and title not in seen:
-                        seen.add(title)
-                        results.append(title)
+            results = []
+            for pk in ids:
+                product = bulk.get(pk)
+                if product and product.title and product.title not in seen:
+                    seen.add(product.title)
+                    results.append(product.title)
             return results
+
         except Exception as exc:
             logger.warning("Autocomplete prefix search failed for %r: %s", q, exc)
             return []
