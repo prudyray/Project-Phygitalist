@@ -76,10 +76,12 @@ class AutoCompleteView(View):
                     except (ValueError, TypeError):
                         pass
 
+            logger.warning("Autocomplete %r: extracted ids=%s", q, ids)
             if not ids:
                 return []
 
             bulk = Product.objects.filter(pk__in=ids).in_bulk()
+            logger.warning("Autocomplete %r: bulk returned %s/%s", q, len(bulk), len(ids))
             seen = set()
             results = []
             for pk in ids:
