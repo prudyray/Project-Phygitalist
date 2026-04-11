@@ -147,7 +147,7 @@ class BaseManticoreIndex:
             logger.warning("TRUNCATE failed for %s: %s", self.TABLE_NAME, exc)
 
         total = 0
-        for chunk in _chunked(queryset.iterator(), chunk_size):
+        for chunk in _chunked(queryset.iterator(chunk_size=chunk_size), chunk_size):
             pairs = []
             for obj in chunk:
                 try:

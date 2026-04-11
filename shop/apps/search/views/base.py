@@ -172,6 +172,11 @@ class BaseSearchView(ListView):
                 repr(hits[0]) if hits else "n/a",
             )
             return []
+        filter_count = Product.objects.filter(pk__in=ids).count()
+        logger.warning(
+            "_hydrate_products: ids=%s  filter(pk__in).count=%d  total_products=%d",
+            ids, filter_count, Product.objects.count(),
+        )
         bulk = Product.objects.in_bulk(ids)
         logger.debug("_hydrate_products: in_bulk returned %d products for ids=%s", len(bulk), ids)
         return [bulk[pk] for pk in ids if pk in bulk]

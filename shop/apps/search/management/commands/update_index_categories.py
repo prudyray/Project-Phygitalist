@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
         total = 0
         chunk_num = 0
-        for chunk in _chunked(qs.iterator(), chunk_size):
+        for chunk in _chunked(qs.iterator(chunk_size=chunk_size), chunk_size):
             chunk_num += 1
             t0 = time.time()
             pairs = []
