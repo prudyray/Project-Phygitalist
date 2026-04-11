@@ -17,7 +17,7 @@
         placeholder="{% trans 'Search' %}"
         aria-label="{% trans 'Search' %}"
         autocomplete="off"
-        data-autocomplete-url="{% site_url SITE_BUYER 'search:autocomplete' %}"
+        data-autocomplete-url="{% url 'search:autocomplete' %}"
     >
 </form>
 
