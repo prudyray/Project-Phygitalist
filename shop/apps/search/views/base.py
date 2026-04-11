@@ -165,9 +165,15 @@ class BaseSearchView(ListView):
                     ids.append(int(raw_id))
             except (AttributeError, TypeError, ValueError):
                 pass
+        logger.debug("_hydrate_products: extracted ids=%s from %d hits", ids, len(hits))
         if not ids:
+            logger.warning(
+                "_hydrate_products: no ids extracted; first hit repr: %s",
+                repr(hits[0]) if hits else "n/a",
+            )
             return []
         bulk = Product.objects.in_bulk(ids)
+        logger.debug("_hydrate_products: in_bulk returned %d products for ids=%s", len(bulk), ids)
         return [bulk[pk] for pk in ids if pk in bulk]
 
     def get_context_data(self, *args, **kwargs):
