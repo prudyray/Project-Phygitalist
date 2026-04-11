@@ -14,27 +14,27 @@
 </form>
 
 <script>
-(function ($) {
-    $(function () {
-        var $input = $('#search-autocomplete-input');
-        if (!$input.length || typeof $.fn.autocomplete === 'undefined') return;
+window.addEventListener('load', function () {
+    if (typeof jQuery === 'undefined' || typeof jQuery.fn.autocomplete === 'undefined') return;
+    var $ = jQuery;
+    var $input = $('#search-autocomplete-input');
+    if (!$input.length) return;
 
-        var autocompleteUrl = '{% site_url SITE_BUYER "search:autocomplete" %}';
+    var autocompleteUrl = '{% site_url SITE_BUYER "search:autocomplete" %}';
 
-        $input.autocomplete({
-            minLength: 3,
-            delay: 200,
-            source: function (request, response) {
-                $.getJSON(autocompleteUrl, { q: request.term }, function (data) {
-                    response(data.results || []);
-                }).fail(function () { response([]); });
-            },
-            select: function (event, ui) {
-                $input.val(ui.item.value);
-                $input.closest('form').submit();
-                return false;
-            }
-        });
+    $input.autocomplete({
+        minLength: 3,
+        delay: 200,
+        source: function (request, response) {
+            $.getJSON(autocompleteUrl, { q: request.term }, function (data) {
+                response(data.results || []);
+            }).fail(function () { response([]); });
+        },
+        select: function (event, ui) {
+            $input.val(ui.item.value);
+            $input.closest('form').submit();
+            return false;
+        }
     });
-}(jQuery));
+});
 </script>
