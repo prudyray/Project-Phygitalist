@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load category_tags %}
 {% load site_urls %}
+{% load sekizai_tags %}
 
 <form class="form-inline my-2 my-lg-0" method="GET" action="{% site_url SITE_BUYER 'search:search' %}">
     <select class="select-active" name="category">
@@ -10,23 +11,27 @@
         <option value="{{category.id}}">{{ category.name }}</option>
         {% endfor %}
     </select>
-    <input id="search-autocomplete-input" name="q" placeholder="{% trans 'Search' %}" aria-label="{% trans 'Search' %}" autocomplete="off">
+    <input
+        id="search-autocomplete-input"
+        name="q"
+        placeholder="{% trans 'Search' %}"
+        aria-label="{% trans 'Search' %}"
+        autocomplete="off"
+        data-autocomplete-url="{% site_url SITE_BUYER 'search:autocomplete' %}"
+    >
 </form>
 
+{% addtoblock "js" %}
 <script>
-window.addEventListener('load', function () {
-    if (typeof jQuery === 'undefined' || typeof jQuery.fn.autocomplete === 'undefined') return;
-    var $ = jQuery;
+(function ($) {
     var $input = $('#search-autocomplete-input');
-    if (!$input.length) return;
-
-    var autocompleteUrl = '{% site_url SITE_BUYER "search:autocomplete" %}';
+    if (!$input.length || typeof $.fn.autocomplete === 'undefined') return;
 
     $input.autocomplete({
         minLength: 3,
         delay: 200,
         source: function (request, response) {
-            $.getJSON(autocompleteUrl, { q: request.term }, function (data) {
+            $.getJSON($input.data('autocomplete-url'), { q: request.term }, function (data) {
                 response(data.results || []);
             }).fail(function () { response([]); });
         },
@@ -36,5 +41,6 @@ window.addEventListener('load', function () {
             return false;
         }
     });
-});
+}(jQuery));
 </script>
+{% endaddtoblock %}

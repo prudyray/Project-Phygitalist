@@ -18,11 +18,10 @@ class AutoCompleteView(View):
     """
     GET /search/autocomplete/?q=<prefix>
 
-    Returns {"results": ["suggestion1", "suggestion2", ...]}
+    Returns {"results": ["Product Title 1", ...]}
 
-    Strategy:
-    1. Try Manticore CALL SUGGEST for spell-corrected prefix suggestions.
-    2. Fall back to a prefix query_string match on the title field.
+    Uses a Manticore SQL SELECT with a prefix MATCH query against the products
+    table. The table has min_prefix_len='2' so prefix queries work for 3+ chars.
     """
 
     MAX_RESULTS = 8
@@ -32,61 +31,38 @@ class AutoCompleteView(View):
         if len(q) < 3:
             return JsonResponse({"results": []})
 
-        suggestions = self._call_suggest(q)
-        if not suggestions:
-            suggestions = self._prefix_search(q)
+        suggestions = self._prefix_search(q)
+        return JsonResponse({"results": suggestions})
 
-        return JsonResponse({"results": suggestions[:self.MAX_RESULTS]})
-
-    def _call_suggest(self, q):
-        """Use Manticore CALL SUGGEST for fuzzy/spell-corrected suggestions."""
+    def _prefix_search(self, q):
+        """SELECT titles from Manticore matching the prefix."""
         try:
             import manticoresearch
             utils_api = manticoresearch.UtilsApi(get_client())
-            # CALL SUGGEST returns rows with 'suggest' column
-            resp = utils_api.sql(
-                f"CALL SUGGEST('{_escape_sql(q)}', '{defaults.PRODUCTS_TABLE}')"
+            safe_q = _escape_sql(q)
+            sql = (
+                f"SELECT title FROM {defaults.PRODUCTS_TABLE} "
+                f"WHERE MATCH('{safe_q}*') AND is_public=1 "
+                f"LIMIT {self.MAX_RESULTS}"
             )
+            resp = utils_api.sql(sql)
+            # resp is a list of result-set objects; each has a .data attr
+            # containing a list of row dicts like {"title": "..."}
             results = []
-            if resp and hasattr(resp, "__iter__"):
-                for row in resp:
-                    # resp may be a list of dicts or objects
-                    if isinstance(row, dict):
-                        s = row.get("suggest") or row.get("word")
-                    else:
-                        s = getattr(row, "suggest", None) or getattr(row, "word", None)
-                    if s and s.lower() != q.lower():
-                        results.append(str(s))
-            return results
-        except Exception as exc:
-            logger.debug("CALL SUGGEST failed for %r: %s", q, exc)
-            return []
-
-    def _prefix_search(self, q):
-        """Fall back to a prefix match on title using the JSON search API."""
-        try:
-            import manticoresearch
-            search_api = manticoresearch.SearchApi(get_client())
-            body = {
-                "table": defaults.PRODUCTS_TABLE,
-                "query": {"query_string": f"{_escape_qs(q)}*"},
-                "limit": self.MAX_RESULTS,
-                "_source": ["title"],
-                "sort": [{"_score": {"order": "desc"}}],
-            }
-            response = search_api.search(body)
             seen = set()
-            results = []
-            if response and hasattr(response, "hits") and response.hits:
-                for h in (response.hits.hits or []):
-                    source = getattr(h, "source", None) or {}
-                    title = source.get("title", "") if isinstance(source, dict) else getattr(source, "title", "")
+            for result_set in (resp or []):
+                if isinstance(result_set, dict):
+                    rows = result_set.get("data") or []
+                else:
+                    rows = getattr(result_set, "data", None) or []
+                for row in rows:
+                    title = row.get("title") if isinstance(row, dict) else getattr(row, "title", None)
                     if title and title not in seen:
                         seen.add(title)
                         results.append(title)
             return results
         except Exception as exc:
-            logger.debug("Prefix search failed for %r: %s", q, exc)
+            logger.warning("Autocomplete prefix search failed for %r: %s", q, exc)
             return []
 
 
@@ -94,13 +70,6 @@ def _escape_sql(s):
     """Minimal escape for values interpolated into CALL SUGGEST SQL."""
     return s.replace("'", "\\'").replace("\\", "\\\\")
 
-
-def _escape_qs(s):
-    """Strip characters that break Manticore query_string syntax."""
-    # Remove common special chars that would cause parse errors
-    for ch in r'\/*~@!^$()[]{}':
-        s = s.replace(ch, " ")
-    return s.strip()
 
 
 class SearchView(BaseSearchView):
