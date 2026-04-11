@@ -321,21 +321,33 @@ AUTHENTICATION_BACKENDS = (
     'shop.apps.otp.auth.OtpBackend',
 )
 
+# Haystack is not used but Oscar's default search.forms imports it at module load time.
+# Keeping a dummy connection prevents an ImproperlyConfigured error at startup.
 HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    "default": {
+        "ENGINE": "haystack.backends.simple_backend.SimpleEngine",
     },
 }
 
+# ── Manticore Search ──────────────────────────────────────────────────────────
+MANTICORE_URL = "http://127.0.0.1:9308"
 
-# HAYSTACK_CONNECTIONS = {
-#     'default': {
-#         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-#         'URL': 'http://127.0.0.1:8983/solr/zite69',
-#         'ADMIN_URL': 'http://127.0.0.1:8393/solr/admin/cores',
-#         'INCLUDE_SPELLING': True,
-#     },
-# }
+OSCAR_SEARCH_PRODUCTS_TABLE = "products"
+OSCAR_SEARCH_CATEGORIES_TABLE = "categories"
+OSCAR_SEARCH_INDEXING_CHUNK_SIZE = 400
+# Manticore-specific facet config (list of dicts) — different from Oscar's OSCAR_SEARCH_FACETS
+# which is Solr/Haystack format {fields: [...], queries: {}}.
+# e.g. MANTICORE_FACETS = [{"name": "attr_color", "label": "Colour", "type": "term"}]
+MANTICORE_FACETS = []
+OSCAR_SEARCH_FILTER_AVAILABLE = False
+OSCAR_SEARCH_PRIORITIZE_AVAILABLE_PRODUCTS = True
+OSCAR_SEARCH_HANDLE_STOCKRECORD_CHANGES = True
+# Required by Oscar's default search.forms module (Solr/Haystack format — not used by us)
+OSCAR_SEARCH_FACETS = {"fields": {}, "queries": {}}
+
+# Uncomment to override sort/items defaults:
+# OSCAR_SEARCH_DEFAULT_ITEMS_PER_PAGE = 20
+# OSCAR_SEARCH_DEFAULT_ORDERING = None  # None = relevancy; "-popularity" once Phase 2 lands
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
