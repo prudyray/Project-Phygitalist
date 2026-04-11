@@ -98,8 +98,18 @@ class BaseManticoreIndex:
     TABLE_NAME = None
     CREATE_SQL = None
 
-    def ensure_schema(self):
+    def ensure_schema(self, drop=False):
+        """Create the table if it doesn't exist.
+
+        Pass drop=True to drop and recreate (used by reindex() so the schema
+        is always up to date regardless of any existing table).
+        """
         utils_api = _get_utils_api()
+        if drop:
+            try:
+                utils_api.sql(f"DROP TABLE IF EXISTS {self.TABLE_NAME}")
+            except Exception as exc:
+                logger.warning("DROP TABLE error for %s: %s", self.TABLE_NAME, exc)
         sql = self.CREATE_SQL.format(table=self.TABLE_NAME)
         try:
             utils_api.sql(sql)
@@ -138,13 +148,8 @@ class BaseManticoreIndex:
         if chunk_size is None:
             chunk_size = defaults.INDEXING_CHUNK_SIZE
 
-        self.ensure_schema()
-
-        utils_api = _get_utils_api()
-        try:
-            utils_api.sql(f"TRUNCATE TABLE {self.TABLE_NAME}")
-        except Exception as exc:
-            logger.warning("TRUNCATE failed for %s: %s", self.TABLE_NAME, exc)
+        # Drop + recreate so the schema is always current (handles stale tables).
+        self.ensure_schema(drop=True)
 
         total = 0
         for chunk in _chunked(queryset.iterator(chunk_size=chunk_size), chunk_size):

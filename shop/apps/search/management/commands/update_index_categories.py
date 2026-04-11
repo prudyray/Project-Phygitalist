@@ -34,16 +34,8 @@ class Command(BaseCommand):
         index = CategoryManticoreIndex()
         qs = index.get_queryset()
 
-        index.ensure_schema()
-
-        import manticoresearch
-        from shop.apps.search.backend import get_client
-
-        utils_api = manticoresearch.UtilsApi(get_client())
-        try:
-            utils_api.sql(f"TRUNCATE TABLE {index.TABLE_NAME}")
-        except Exception as exc:
-            self.stderr.write(f"TRUNCATE failed: {exc}")
+        # Drop + recreate table so schema is always current
+        index.ensure_schema(drop=True)
 
         total = 0
         chunk_num = 0
@@ -68,6 +60,4 @@ class Command(BaseCommand):
                     f"  chunk {chunk_num}: {len(pairs)} docs in {elapsed:.2f}s"
                 )
 
-        self.stdout.write(
-            self.style.SUCCESS(f"Indexed {total} categories.")
-        )
+        self.stdout.write(self.style.SUCCESS(f"Indexed {total} categories."))
